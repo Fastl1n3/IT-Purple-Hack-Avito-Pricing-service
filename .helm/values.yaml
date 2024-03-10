@@ -1,0 +1,63 @@
+frontend:
+  name: frontend
+  image:
+    registry: registry
+    repository: repo1
+    tag: latest
+  service:
+    port: 8080
+
+discountSegmentsService:
+  name: discount-segments-service
+  image:
+    registry: registry
+    repository: discount-segments-service
+    tag: latest
+  service:
+    port: 8080
+
+pricingService:
+  name: pricing-service
+  image:
+    registry: registry
+    repository: pricing-service
+    tag: latest
+  service:
+    port: 8080
+
+baselineTreeService:
+  name: baseline-tree-service.yaml
+  image:
+    registry: registry
+    repository: pricing-service
+    tag: latest
+  service:
+    port: 8080
+
+logstash:
+  name: logstash
+  image:
+    registry:
+    repository: logstash
+    tag: 8.12.2
+  service:
+    port: 9600
+
+ingress:
+  class: ns-ingress
+  externalHost: admin-panel.info
+
+treePVC:
+  name: treePVC
+  accessmode: "ReadWriteOnce"
+  size: "1Gi"
+  storage: "gluster"
+  mountpath: "/src/tree-data"
+
+matrixPVC:
+  name: matrixPVC
+  accessmode: "ReadWriteOnce"
+  size: "1Gi"
+  storage: "gluster"
+  mountpath: "/src/matrix-data"
+

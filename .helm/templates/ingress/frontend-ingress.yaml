@@ -1,0 +1,21 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: {{ .Release.Name }}
+  labels:
+    app: {{ .Release.Name }}
+  annotations:
+    kubernetes.io/ingress.class: {{ .Values.ingress.class }}
+    nginx.ingress.kubernetes.io/proxy-body-size: 16m
+spec:
+  rules:
+    - host: {{ .Values.ingress.externalHost }}
+      http:
+        paths:
+          - path: /
+            pathType: ImplementationSpecific
+            backend:
+              service:
+                name: {{ .Values.frontend.name }}
+                port:
+                  number: 8080

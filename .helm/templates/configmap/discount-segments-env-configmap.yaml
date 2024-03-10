@@ -1,0 +1,10 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ .Values.discountSegmentsService.name }}-environment
+  labels:
+    app: {{ .Values.discountSegmentsService.name}}
+data:
+  {{- range $key, $val := .Values.discountSegmentsService.service}}
+  {{ $key}}: {{$val | quote}}
+  {{- end}}

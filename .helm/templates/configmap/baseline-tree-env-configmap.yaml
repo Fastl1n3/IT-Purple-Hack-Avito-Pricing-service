@@ -1,0 +1,10 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ .Values.baselineTreeService.name }}-environment
+  labels:
+    app: {{ .Values.baselineTreeService.name}}
+data:
+  {{- range $key, $val := .Values.baselineTreeService.service}}
+  {{ $key}}: {{$val | quote}}
+  {{- end}}

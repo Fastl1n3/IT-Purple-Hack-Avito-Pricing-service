@@ -1,0 +1,33 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Values.pricingService.name }}
+  labels:
+    app: {{.Values.pricingService.name}}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: {{.Values.pricingService.name}}
+  template:
+    metadata:
+      labels:
+        app: {{.Values.pricingService.name}}
+      annotations:
+        checksum/env-config: {{ include (print $.Template.BasePath "/configmap/pricing-env-configmap.yaml") . | sha256sum }}
+    spec:
+      containers:
+        - name: {{.Values.pricingService.name}}
+          image: {{.Values.pricingService.image.repository}}:{{.Values.pricingService.image.tag}}
+          envFrom:
+            - configMapRef:
+                name: {{.Values.pricingService.name}}-environment
+          volumeMounts:
+            - mountPath: {{.Values.matrixPVC.mountpath | quote}}
+              name: {{.Values.matrixPVC.name}}
+          ports:
+            - containerPort: {{.Values.pricingService.service.port}}
+      volumes:
+        - name: {{.Values.matrixPVC.name}}
+          persistentVolumeClaim:
+            claimName: {{.Values.matrixPVC.name}}

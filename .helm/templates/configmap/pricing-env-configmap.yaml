@@ -1,0 +1,10 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ .Values.pricingService.name }}-environment
+  labels:
+    app: {{ .Values.pricingService.name}}
+data:
+  {{- range $key, $val := .Values.pricingService.service}}
+  {{ $key}}: {{$val | quote}}
+  {{- end}}

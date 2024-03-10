@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Values.pricingService.name }}
+  labels:
+    app: {{ .Values.pricingService.name }}
+spec:
+  selector:
+    app: {{ .Values.pricingService.name }}
+  type: ClusterIP
+  ports:
+    - name: http
+      port: 8080
+      targetPort: 8080

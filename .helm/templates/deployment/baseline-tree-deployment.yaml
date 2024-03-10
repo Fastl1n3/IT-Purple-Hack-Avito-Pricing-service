@@ -1,0 +1,33 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Values.baselineTreeService.name }}
+  labels:
+    app: {{.Values.baselineTreeService.name}}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: {{.Values.baselineTreeService.name}}
+  template:
+    metadata:
+      labels:
+        app: {{.Values.baselineTreeService.name}}
+      annotations:
+        checksum/env-config: {{ include (print $.Template.BasePath "/configmap/baseline-tree-env-configmap.yaml") . | sha256sum }}
+    spec:
+      containers:
+        - name: {{.Values.baselineTreeService.name}}
+          image: {{.Values.baselineTreeService.image.repository}}:{{.Values.baselineTreeService.image.tag}}
+          envFrom:
+            - configMapRef:
+                name: {{.Values.baselineTreeService.name}}-environment
+          volumeMounts:
+            - mountPath: {{.Values.treePVC.mountpath | quote}}
+              name: {{.Values.treePVC.name}}
+          ports:
+            - containerPort: {{.Values.baselineTreeService.service.port}}
+      volumes:
+        - name: {{.Values.treePVC.name}}
+          persistentVolumeClaim:
+            claimName: {{.Values.treePVC.name}}

@@ -1,0 +1,26 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Values.discountSegmentsService.name }}
+  labels:
+    app: {{.Values.discountSegmentsService.name}}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: {{.Values.discountSegmentsService.name}}
+  template:
+    metadata:
+      labels:
+        app: {{.Values.discountSegmentsService.name}}
+      annotations:
+        checksum/env-config: {{ include (print $.Template.BasePath "/configmap/discount-segments-env-configmap.yaml") . | sha256sum }}
+    spec:
+      containers:
+        - name: {{.Values.discountSegmentsService.name}}
+          image: {{.Values.discountSegmentsService.image.repository}}:{{.Values.discountSegmentsService.image.tag}}
+          envFrom:
+            - configMapRef:
+                name: {{.Values.discountSegmentsService.name}}-environment
+          ports:
+            - containerPort: {{.Values.discountSegmentsService.service.port}}
