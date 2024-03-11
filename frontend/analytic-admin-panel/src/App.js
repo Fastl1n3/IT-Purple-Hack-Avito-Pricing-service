@@ -1,15 +1,30 @@
-import logo from './logo.svg';
-import './App.css';
+import styles from './App.css'
 
-import 'bootstrap/dist/css/bootstrap.min.css'
-import Button from 'react-bootstrap/Button';
+const isAuth = true;
 
-function App() {
+const MENU = [
+	{
+		name: 'Home',
+		link: '/'
+	},
+	{
+		name: 'List of Matrix',
+		link: '/mlist'
+	},
+	{
+		name: 'Matrix',
+		link: '/matrix'
+	}
+]
+
+export function App() {
 	return (
-		<Button variant='primary'>
-			Web Dev blogfdssafdassddssd
-		</Button>
+		<div className={styles.layout}>
+
+			{MENU.map(item => (
+				<p key={item.link}>{item.name}</p>
+			))}
+			<h1>First component</h1>
+		</div>
 	);
 }
-
-export default App;
