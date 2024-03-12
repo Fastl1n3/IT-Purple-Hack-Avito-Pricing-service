@@ -1,0 +1,16 @@
+#!/bin/bash
+databases=("postgresql-master" "postgresql-replica-1" "postgresql-replica-2")
+schema_file="./postgresql-schema.sql"
+
+for db in "${databases[@]}"; do
+    echo "Copying schema to $db..."
+    docker cp "$schema_file" "$db:/tmp/schema.sql"
+
+    echo "Loading schema in $db..."
+    docker exec -i "$db" psql -U "$POSTGRESQL_USER" -d "$POSTGRESQL_DB" -f /tmp/schema.sql
+
+    echo "Removing schema file from $db..."
+    docker exec -i "$db" rm /tmp/schema.sql
+
+    echo "Schema loaded successfully in $db"
+done
