@@ -40,6 +40,7 @@ GET http://backend:8080/baseline_matrices
   "matrices": [
     {
       "matrix_id": 1,
+      "segment_id": -1,
       "matrix_name": "matrix name"
     }
   ],
@@ -61,6 +62,7 @@ GET http://backend:8080/discount_matrices
   "matrices": [
     {
       "matrix_id": 1,
+      "segment_id": 23,
       "matrix_name": "matrix name"
     }
   ],
