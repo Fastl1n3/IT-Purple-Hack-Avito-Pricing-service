@@ -37,12 +37,11 @@ GET http://backend:8080/baseline_matrices
 ### Response
 ```json
 {
-  "baseline_matrices": [
+  "matrices": [
     {
-      "baseline_matrix_id": 1,
+      "matrix_id": 1,
       "matrix_name": "matrix name"
-    },
-    ...
+    }
   ],
   "timestamp": "YYYY-MM-DD HH-mm-SS"
 }
@@ -59,12 +58,11 @@ GET http://backend:8080/discount_matrices
 
 ```json
 {
-  "discount_matrices": [
+  "matrices": [
     {
-      "discount_matrix_id": 1,
+      "matrix_id": 1,
       "matrix_name": "matrix name"
-    },
-    ...
+    }
   ],
   "timestamp": "YYYY-MM-DD HH-mm-SS"
 }
@@ -84,10 +82,8 @@ GET http://backend:8080/discount_matrices?segment={s_id}
 ```json
 {
   "segment_id": 1,
-  "discount_matrix": {
-    "discount_matrix_id": 52,
-    "matrix_name": "matrix name"
-  },
+  "matrix_id": 52,
+  "matrix_name": "matrix name",
   "timestamp": "YYYY-MM-DD HH-mm-SS"
 }
 ```
@@ -146,10 +142,9 @@ GET http://backend:8080/microcategories/{mc_id}
       "microcategory_id": 2,
       "name": "other name",
       "child_nodes": [
-        ...
+        
       ]
-    },
-    ...
+    }
   ],
   "timestamp": "YYYY-MM-DD HH-mm-SS"
 }
@@ -173,8 +168,7 @@ GET http://backend:8080/locations/{lc_id}
     {
       "microcategory_id": 2,
       "name": "location name"
-    },
-    ...
+    }
   ],
   "timestamp": "YYYY-MM-DD HH-mm-SS"
 }
