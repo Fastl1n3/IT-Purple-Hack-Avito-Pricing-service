@@ -1,11 +1,11 @@
-package ru.itpurplehack.avito.decepichupachapaticon.Leontev;
+package ru.itpurplehack.avito.decepichupachapaticon.algo;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import ru.itpurplehack.avito.decepichupachapaticon.Leontev.Entities.AuxiliaryPair;
-import ru.itpurplehack.avito.decepichupachapaticon.Leontev.services.AuxiliaryTableService;
-import ru.itpurplehack.avito.decepichupachapaticon.Leontev.services.MatrixService;
-import ru.itpurplehack.avito.decepichupachapaticon.Leontev.services.TreeTableService;
+import ru.itpurplehack.avito.decepichupachapaticon.algo.Entities.AuxiliaryPair;
+import ru.itpurplehack.avito.decepichupachapaticon.algo.services.AuxiliaryTableService;
+import ru.itpurplehack.avito.decepichupachapaticon.algo.services.MatrixService;
+import ru.itpurplehack.avito.decepichupachapaticon.algo.services.TreeTableService;
 
 import java.util.Arrays;
 import java.util.List;

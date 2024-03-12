@@ -1,4 +1,4 @@
-package ru.itpurplehack.avito.decepichupachapaticon.Leontev.Entities;
+package ru.itpurplehack.avito.decepichupachapaticon.algo.Entities;
 
 public class AuxiliaryPair {
     private int height;

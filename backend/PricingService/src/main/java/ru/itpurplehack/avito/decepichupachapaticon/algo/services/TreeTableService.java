@@ -1,8 +1,7 @@
-package ru.itpurplehack.avito.decepichupachapaticon.Leontev.services;
+package ru.itpurplehack.avito.decepichupachapaticon.algo.services;
 
 import org.springframework.stereotype.Component;
-import ru.itpurplehack.avito.decepichupachapaticon.Leontev.Entities.AuxiliaryPair;
-import ru.itpurplehack.avito.decepichupachapaticon.Leontev.IdType;
+import ru.itpurplehack.avito.decepichupachapaticon.algo.IdType;
 
 import java.util.ArrayList;
 import java.util.List;
