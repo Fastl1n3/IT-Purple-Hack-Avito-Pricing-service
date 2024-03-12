@@ -70,7 +70,7 @@ GET backend:8080/discount_matrices
 }
 ```
 
-## Получение скидочных матриц сегмента (без содержимого)
+## Получение скидочной матрицы для сегмента (без содержимого)
 
 ### Request
 ```http request
@@ -292,43 +292,6 @@ POST backend:8080/baseline_matrices/{m_id}
   "timestamp": "YYYY-MM-DD HH-mm-SS"
 }
 ```
-
-## Добавление пользователя в сегмент
-
-### Request
-```http request
-POST backend:8080/segments/{s_id}
-```
-
-- s_id - id сегмента
-
-### Request body
-```json
-{
-  "user_id": 10
-}
-```
-
-### Response
-
-#### Code 201
-```json
-{
-  "segment_id":  2,
-  "timestamp": "YYYY-MM-DD HH-mm-SS"
-}
-```
-
-#### Other code
-```json
-{
-  "error_code": 402,
-  "description": "error description",
-  "timestamp": "YYYY-MM-DD HH-mm-SS"
-}
-```
-
-
 
 ---
 
