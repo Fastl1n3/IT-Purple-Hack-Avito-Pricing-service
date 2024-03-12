@@ -122,7 +122,47 @@ GET http://backend:8080/price/{bm_id}?location={lc_id}&category={mc_id}
 }
 ```
 
----
+
+## Получение верхних 3 уровней микрокатегорий
+
+### Request
+```http request
+GET http://backend:8080/microcategories
+```
+
+### Response
+```json
+{
+  "values": [
+    {
+      "microcategory_id": 2,
+      "name": "other name"
+    }
+  ],
+  "timestamp": "YYYY-MM-DD HH-mm-SS"
+}
+```
+
+## Получение верхнего уровня локаций
+
+### Request
+```http request
+GET http://backend:8080/locations
+```
+
+### Response
+```json
+{
+  "values": [
+    {
+      "microcategory_id": 2,
+      "name": "location name"
+    }
+  ],
+  "timestamp": "YYYY-MM-DD HH-mm-SS"
+}
+```
+
 ## Получение следующих 3 уровней микрокатегорий
 
 ### Request
