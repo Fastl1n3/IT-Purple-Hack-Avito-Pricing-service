@@ -32,12 +32,9 @@ services:
       replicas: 3
     restart: on-failure
     depends_on:
-      postgresql:
-        condition: service_started
-      neo4j:
-        condition: service_started
-      redis:
-        condition: service_started
+      - postgresql
+      - neo4j
+      - redis
     ports:
       - "8080"
     environment:
