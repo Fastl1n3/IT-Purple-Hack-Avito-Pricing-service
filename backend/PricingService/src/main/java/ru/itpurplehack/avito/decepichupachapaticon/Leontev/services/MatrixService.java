@@ -2,6 +2,7 @@ package ru.itpurplehack.avito.decepichupachapaticon.Leontev.services;
 
 import org.springframework.stereotype.Component;
 import ru.itpurplehack.avito.decepichupachapaticon.Leontev.Entities.AuxiliaryPair;
+import ru.itpurplehack.avito.decepichupachapaticon.Leontev.Entities.Price;
 import ru.itpurplehack.avito.decepichupachapaticon.Leontev.IdType;
 
 import java.util.ArrayList;
@@ -16,12 +17,17 @@ public class MatrixService {
     public int getDiscountMatrixCount() {
         return discountMatrices.size();
     }
+    public List<Integer> getDiscountMatrices(){
+        return discountMatrices;
+    }
 
     public boolean findInDiscountMatrix(int nodeId, int i, IdType treeType) {
         int matrixId = discountMatrices.get(i);
         return true;
     }
-
+    public Optional<Price> getPrice(int categoryId, int locationId, int matrixId){
+        return null;
+    }
     public void addPair(int categoryId, int locationId, int matrixId) {
     }
     public void deletePair(int categoryId, int locationId, int matrixId) {
@@ -34,7 +40,7 @@ public class MatrixService {
         int matrixId = discountMatrices.get(i);
     }
 
-    public Optional<AuxiliaryPair> getHeight(int nodeId, int matrixId, IdType treeType) {
+    public Optional<AuxiliaryPair> getHeight(int nodeId, int matrixId) {
         return null;
     }
 

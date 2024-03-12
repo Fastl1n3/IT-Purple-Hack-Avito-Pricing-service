@@ -74,7 +74,7 @@ public class AlgorithmModule {
         List<Integer> children = treeTableService.getNodeChildren(nodeId, treeType);
         if (children != null) {
             for (int childNode : children) {
-                Optional<AuxiliaryPair> auxiliaryPair = matrixService.getHeight(childNode, matrixId, treeType);
+                Optional<AuxiliaryPair> auxiliaryPair = matrixService.getHeight(childNode, matrixId);
                 if (auxiliaryPair.isPresent()) {
                     if (auxiliaryPair.get().getHeight() == 0) {
                         continue;
@@ -104,7 +104,7 @@ public class AlgorithmModule {
     private int findNewHeight(int nodeId, int matrixId, IdType treeType) {
         Optional<Integer> parentNode = treeTableService.getParent(nodeId, treeType);
         if (parentNode.isPresent()) {
-            Optional<AuxiliaryPair> auxiliaryPair = matrixService.getHeight(parentNode.get(), matrixId, treeType);
+            Optional<AuxiliaryPair> auxiliaryPair = matrixService.getHeight(parentNode.get(), matrixId);
             return auxiliaryPair.map(pair -> pair.getHeight() + 1).orElse(-1);
         } else {
             return -1;
@@ -121,14 +121,19 @@ public class AlgorithmModule {
         List<Integer> children = treeTableService.getNodeChildren(nodeId, treeType);
         if (children != null) {
             for (int childNode : children) {
-                Optional<AuxiliaryPair> auxiliaryPair = matrixService.getHeight(childNode, matrixId, treeType);
+                Optional<AuxiliaryPair> auxiliaryPair = matrixService.getHeight(childNode, matrixId);
                 if (auxiliaryPair.isPresent()) {
                     if (auxiliaryPair.get().getHeight() == 0) {
                         continue;
                     }
                 }
-                changeHeightsWithAdding(childNode, height, matrixId, treeType);
+                changeHeightsWithRemoving(childNode, height, matrixId, treeType);
             }
         }
+    }
+
+    public void roadUpSearch(int categoryId, int locationId){
+        List<Integer> discountMatrices = matrixService.getDiscountMatrices();
+        
     }
 }
