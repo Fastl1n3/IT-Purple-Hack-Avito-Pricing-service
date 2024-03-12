@@ -9,7 +9,7 @@
 
 ### Request
 ```http request
-GET backend:8080/segments/{id}
+GET http://backend:8080/segments/{id}
 ```
 - id - id пользователя 
 
@@ -31,7 +31,7 @@ GET backend:8080/segments/{id}
 
 ### Request
 ```http request
-GET backend:8080/baseline_matrices
+GET http://backend:8080/baseline_matrices
 ```
 
 ### Response
@@ -52,7 +52,7 @@ GET backend:8080/baseline_matrices
 
 ### Request
 ```http request
-GET backend:8080/discount_matrices
+GET http://backend:8080/discount_matrices
 ```
 
 ### Response
@@ -74,7 +74,7 @@ GET backend:8080/discount_matrices
 
 ### Request
 ```http request
-GET backend:8080/discount_matrices?segment={s_id}
+GET http://backend:8080/discount_matrices?segment={s_id}
 ```
 
 - s_id - id сегменты
@@ -96,7 +96,7 @@ GET backend:8080/discount_matrices?segment={s_id}
 
 ### Request 
 ```http request
-GET backend:8080/price/{bm_id}?location={lc_id}&category={mc_id}
+GET http://backend:8080/price/{bm_id}?location={lc_id}&category={mc_id}
 ```
 
 - bm_id - id базовой матрицы
@@ -131,7 +131,7 @@ GET backend:8080/price/{bm_id}?location={lc_id}&category={mc_id}
 
 ### Request
 ```http request
-GET backend:8080/microcategories/{mc_id}
+GET http://backend:8080/microcategories/{mc_id}
 ```
 
 - mc_id - id микрокатегории
@@ -159,7 +159,7 @@ GET backend:8080/microcategories/{mc_id}
 
 ### Request
 ```http request
-GET backend:8080/locations/{lc_id}
+GET http://backend:8080/locations/{lc_id}
 ```
 
 - lc_id - id локации
@@ -188,7 +188,7 @@ GET backend:8080/locations/{lc_id}
 
 ### Request
 ```http request
-POST backend:8080/discount_matrices/{m_id}
+POST http://backend:8080/discount_matrices/{m_id}
 ```
 
 - m_id - id скидочной матрицы
@@ -225,7 +225,7 @@ POST backend:8080/discount_matrices/{m_id}
 
 ### Request
 ```http request
-POST backend:8080/discount_matrices
+POST http://backend:8080/discount_matrices
 ```
 
 ### Request body
@@ -260,7 +260,7 @@ POST backend:8080/discount_matrices
 
 ### Request
 ```http request
-POST backend:8080/baseline_matrices/{m_id}
+POST http://backend:8080/baseline_matrices/{m_id}
 ```
 
 - m_id - id базовой матрицы
@@ -301,7 +301,7 @@ POST backend:8080/baseline_matrices/{m_id}
 
 ### Request
 ```http request
-PATCH backend:8080/discount_matrices/{m_id}
+PATCH http://backend:8080/discount_matrices/{m_id}
 ```
 
 - m_id - id скидочной матрицы
@@ -338,7 +338,7 @@ PATCH backend:8080/discount_matrices/{m_id}
 
 ### Request
 ```http request
-PATCH backend:8080/baseline_matrices/{m_id}
+PATCH http://backend:8080/baseline_matrices/{m_id}
 ```
 
 - m_id - id базовой матрицы
@@ -379,7 +379,7 @@ PATCH backend:8080/baseline_matrices/{m_id}
 
 ### Request
 ```http request
-DELETE backend:8080/discount_matrices/{m_id}
+DELETE http://backend:8080/discount_matrices/{m_id}
 ```
 
 - m_id - id скидочной матрицы
