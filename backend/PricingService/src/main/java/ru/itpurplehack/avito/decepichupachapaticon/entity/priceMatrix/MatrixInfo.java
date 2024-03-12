@@ -1,5 +1,6 @@
 package ru.itpurplehack.avito.decepichupachapaticon.entity.priceMatrix;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -10,13 +11,14 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class PricePair {
+@JsonIgnoreProperties(ignoreUnknown = true)
+public class MatrixInfo {
 
-    @JsonProperty("microcategory_id")
-    private int microcategoryId;
+    @JsonProperty("matrix_id")
+    private int matrixId;
 
-    @JsonProperty("location_id")
-    private int locationId;
+    @JsonProperty("matrix_name")
+    private String matrixName;
 
-    private int price;
+    private int segment;
 }
