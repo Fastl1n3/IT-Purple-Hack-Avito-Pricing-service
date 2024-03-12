@@ -155,7 +155,7 @@ GET http://backend:8080/locations
 {
   "values": [
     {
-      "microcategory_id": 2,
+      "location_id": 2,
       "name": "location name"
     }
   ],
@@ -206,7 +206,7 @@ GET http://backend:8080/locations/{lc_id}
   "name": "location name",
   "child_nodes": [
     {
-      "microcategory_id": 2,
+      "location_id": 2,
       "name": "location name"
     }
   ],
