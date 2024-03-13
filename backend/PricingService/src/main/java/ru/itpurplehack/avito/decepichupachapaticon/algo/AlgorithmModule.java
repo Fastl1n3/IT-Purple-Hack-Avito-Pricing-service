@@ -252,7 +252,6 @@ public class AlgorithmModule {
         for (Map.Entry<Integer, String> ent : matrixDAO.getDiscounts().entrySet()) {
             Microcategory microcategory = microcategoryRepository.findById(categoryId).get();
             Location location = locationRepository.findById(locationId).get();
-
             boolean findFlag = true;
             while (true) {
                 if (findFlag) {
@@ -262,64 +261,39 @@ public class AlgorithmModule {
                     }
                 }
                 findFlag = true;
-
-                int height = -1;
-                for (MicrocategoryJump jump : microcategory.getMicrocategoryJumps()) {
-                    if (jump.getDiscountMatrixId() == ent.getKey()) {
-                        height = jump.getDistanceToNearest();
-                        break;
-                    }
-                }
-                if (height != -1) {
-                    if (height == 0) {
+                Optional<MicrocategoryJump> categoryJump = microcategoryService.findJumpByMatrix(microcategory, ent.getKey());
+                if (categoryJump.isPresent()) {
+                    if (categoryJump.get().getDistanceToNearest() == 0) {
                         microcategory = microcategory.getParentMicrocategory();
-                        height = -1;
-                        for (MicrocategoryJump jump : microcategory.getMicrocategoryJumps()) {
-                            if (jump.getDiscountMatrixId() == ent.getKey()) {
-                                height = jump.getDistanceToNearest();
-                                break;
-                            }
-                        }
-                        if (height != -1) {
-                            for (int i = 0; i < height; i++) {
+                        categoryJump = microcategoryService.findJumpByMatrix(microcategory, ent.getKey());
+                        if (categoryJump.isPresent()) {
+                            for (int i = 0; i < categoryJump.get().getDistanceToNearest(); i++) {
                                 microcategory = microcategory.getParentMicrocategory();
                             }
                         } else {
                             findFlag = false;
                         }
                     } else {
-                        for (int i = 0; i < height; i++) {
+                        for (int i = 0; i < categoryJump.get().getDistanceToNearest(); i++) {
                             microcategory = microcategory.getParentMicrocategory();
                         }
                     }
                 } else {
                     microcategory = microcategoryRepository.findById(categoryId).get();
-                    height = -1;
-                    for (LocationJump jump : location.getLocationJumps()) {
-                        if (jump.getDiscountMatrixId() == ent.getKey()) {
-                            height = jump.getDistanceToNearest();
-                            break;
-                        }
-                    }
-                    if (height != -1) {
-                        if (height == 0) {
+                    Optional<LocationJump> locationJump = locationService.findJumpByMatrix(location, ent.getKey());
+                    if (locationJump.isPresent()) {
+                        if (locationJump.get().getDistanceToNearest() == 0) {
                             location = location.getParentLocation();
-                            height = -1;
-                            for (LocationJump jump : location.getLocationJumps()) {
-                                if (jump.getDiscountMatrixId() == ent.getKey()) {
-                                    height = jump.getDistanceToNearest();
-                                    break;
-                                }
-                            }
-                            if (height != -1) {
-                                for (int i = 0; i < height; i++) {
+                            locationJump = locationService.findJumpByMatrix(location, ent.getKey());
+                            if (locationJump.isPresent()) {
+                                for (int i = 0; i < locationJump.get().getDistanceToNearest(); i++) {
                                     location = location.getParentLocation();
                                 }
                             } else {
                                 return 0;
                             }
                         } else {
-                            for (int i = 0; i < height; i++) {
+                            for (int i = 0; i < locationJump.get().getDistanceToNearest(); i++) {
                                 location = location.getParentLocation();
                             }
                         }
@@ -329,12 +303,6 @@ public class AlgorithmModule {
                 }
             }
         }
-        return 0;
-    }
-
-    private int microcategoryLoop(int categoryId, Location location) {
-        Microcategory microcategory = microcategoryRepository.findById(categoryId).get();
-
         return 0;
     }
 }
