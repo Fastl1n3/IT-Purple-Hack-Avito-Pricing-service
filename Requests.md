@@ -4,29 +4,6 @@
 
 # GET Requests
 
-## Получение сегментов пользователя:
-
-
-### Request
-```http request
-GET http://backend:8080/segments/{id}
-```
-- id - id пользователя 
-
-### Response
-
-```json
-{
-  "segments": [
-    1,
-    2,
-    3
-  ],
-  "user_id": 10,
-  "timestamp": "YYYY-MM-DD HH-mm-SS"
-}
-```
-
 ## Получение базовых матриц (без содержимого)
 
 ### Request
@@ -70,26 +47,6 @@ GET http://backend:8080/discount_matrices
 }
 ```
 
-## Получение скидочной матрицы для сегмента (без содержимого)
-
-### Request
-```http request
-GET http://backend:8080/discount_matrices?segment={s_id}
-```
-
-- s_id - id сегменты
-
-### Response
-
-```json
-{
-  "segment_id": 1,
-  "matrix_id": 52,
-  "matrix_name": "matrix name",
-  "timestamp": "YYYY-MM-DD HH-mm-SS"
-}
-```
-
 ## Получение цены 
 
 ### Request 
@@ -111,7 +68,6 @@ GET http://backend:8080/price/{bm_id}?location={lc_id}&category={mc_id}
   "location_id": 1,
   "microcategory_id": 2,
   "baseline_matrix_id": 30,
-  "user_segment_id": 5 
 }
 ```
 
@@ -154,13 +110,9 @@ GET http://backend:8080/locations
 
 ### Response
 ```json
-{
-  "values": [
-    {
-      "location_id": 2,
-      "name": "location name"
-    }
-  ],
+{  
+  "location_id": 2,
+  "name": "location name"   
   "timestamp": "YYYY-MM-DD HH-mm-SS"
 }
 ```
@@ -256,41 +208,6 @@ POST http://backend:8080/discount_matrices/{m_id}
   "timestamp": "YYYY-MM-DD HH-mm-SS"
 }
 ```
-
-## Создание скидочной матрицы 
-
-### Request
-```http request
-POST http://backend:8080/discount_matrices
-```
-
-### Request body
-```json
-{
-  "matrix_name": "matrix name",
-  "timestamp": "YYYY-MM-DD HH-mm-SS"
-}
-```
-
-### Response
-
-#### Code 201
-```json
-{
-  "matrix_id":  22,
-  "timestamp": "YYYY-MM-DD HH-mm-SS"
-}
-```
-
-#### Other code
-```json
-{
-  "error_code": 501,
-  "description": "error description",
-  "timestamp": "YYYY-MM-DD HH-mm-SS"
-}
-```
-
 
 ## Добавление записи в базовую матрицу
 
