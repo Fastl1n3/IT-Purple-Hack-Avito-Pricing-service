@@ -4,7 +4,7 @@ package ru.itpurplehack.avito.decepichupachapaticon.controller.admin;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import ru.itpurplehack.avito.decepichupachapaticon.algo.AlgorithmModule;
+import ru.itpurplehack.avito.decepichupachapaticon.priceReturnService.PriceReturnService;
 import ru.itpurplehack.avito.decepichupachapaticon.dao.MatrixDAO;
 import ru.itpurplehack.avito.decepichupachapaticon.dao.MatrixInfoDAO;
 import ru.itpurplehack.avito.decepichupachapaticon.entity.priceMatrix.MatrixInfo;
@@ -23,13 +23,13 @@ public class MatrixController {
     private final MatrixInfoDAO matrixInfoDAO;
 
     private final MatrixDAO matrixDAO;
-    private final AlgorithmModule algorithmModule;
+    private final PriceReturnService priceReturnService;
 
     @Autowired
-    public MatrixController(MatrixInfoDAO matrixInfoDAO, MatrixDAO matrixDAO, AlgorithmModule algorithmModule) {
+    public MatrixController(MatrixInfoDAO matrixInfoDAO, MatrixDAO matrixDAO, PriceReturnService priceReturnService) {
         this.matrixInfoDAO = matrixInfoDAO;
         this.matrixDAO = matrixDAO;
-        this.algorithmModule = algorithmModule;
+        this.priceReturnService = priceReturnService;
     }
 
     @GetMapping("/discount_matrices")
@@ -49,7 +49,7 @@ public class MatrixController {
             return ResponseEntity.status(402).body(new FailedCreateRecordResponse(402, "Not found this matrix: " + id));
         }
         matrixDAO.save(matrixInfo.get().getMatrixName(), pricePair);
-        algorithmModule.addPair(pricePair.getMicrocategoryId(), pricePair.getLocationId(), id);
+        priceReturnService.addPair(pricePair.getMicrocategoryId(), pricePair.getLocationId(), id);
         return ResponseEntity.ok(new SuccessCreateRecordResponse(id));
     }
 
@@ -60,7 +60,7 @@ public class MatrixController {
             return ResponseEntity.status(402).body(new FailedCreateRecordResponse(402, "Not found this matrix: " + id));
         }
         matrixDAO.save(matrixInfo.get().getMatrixName(), pricePair);
-
+        priceReturnService.addPair(pricePair.getMicrocategoryId(), pricePair.getLocationId(), id);
         return ResponseEntity.ok(new SuccessCreateRecordResponse(id));
     }
 
@@ -91,7 +91,7 @@ public class MatrixController {
             return ResponseEntity.status(402).body(new FailedCreateRecordResponse(402, "Not found this matrix: " + id));
         }
         matrixDAO.delete(matrixInfo.get().getMatrixName(), pricePair);
-        algorithmModule.deletePair(pricePair.getMicrocategoryId(), pricePair.getLocationId(), id);
+        priceReturnService.deletePair(pricePair.getMicrocategoryId(), pricePair.getLocationId(), id);
         return ResponseEntity.ok(new SuccessCreateRecordResponse(id));
     }
 
@@ -102,6 +102,7 @@ public class MatrixController {
             return ResponseEntity.status(402).body(new FailedCreateRecordResponse(402, "Not found this matrix: " + id));
         }
         matrixDAO.delete(matrixInfo.get().getMatrixName(), pricePair);
+        priceReturnService.deletePair(pricePair.getMicrocategoryId(), pricePair.getLocationId(), id);
         return ResponseEntity.ok(new SuccessCreateRecordResponse(id));
     }
 }

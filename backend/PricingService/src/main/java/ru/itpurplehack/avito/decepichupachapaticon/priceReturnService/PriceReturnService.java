@@ -1,4 +1,4 @@
-package ru.itpurplehack.avito.decepichupachapaticon.algo;
+package ru.itpurplehack.avito.decepichupachapaticon.priceReturnService;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -20,7 +20,7 @@ import ru.itpurplehack.avito.decepichupachapaticon.service.MicrocategoryService;
 import java.util.*;
 
 @Component
-public class AlgorithmModule {
+public class PriceReturnService {
     private final MatrixDAO matrixDAO;
     private final MatrixInfoDAO matrixInfoDao;
     private final LocationService locationService;
@@ -30,7 +30,7 @@ public class AlgorithmModule {
     private final DiscountSegments discountSegments;
 
     @Autowired
-    public AlgorithmModule(MatrixDAO matrixDAO, MatrixInfoDAO matrixInfoDao, LocationService locationService, MicrocategoryService microcategoryService, LocationRepository locationRepository, MicrocategoryRepository microcategoryRepository, DiscountSegments discountSegments) {
+    public PriceReturnService(MatrixDAO matrixDAO, MatrixInfoDAO matrixInfoDao, LocationService locationService, MicrocategoryService microcategoryService, LocationRepository locationRepository, MicrocategoryRepository microcategoryRepository, DiscountSegments discountSegments) {
         this.matrixDAO = matrixDAO;
         this.matrixInfoDao = matrixInfoDao;
         this.locationService = locationService;
@@ -41,7 +41,7 @@ public class AlgorithmModule {
     }
 
 
-    public void fillJumpTable() {
+    public void fillTables() {
         List<MatrixInfo> matrices = matrixInfoDao.findAllDiscountMatrices();
         int[] heights = new int[matrices.size()];
 
@@ -50,6 +50,14 @@ public class AlgorithmModule {
         dfs(heights, microcategory.getId(), matrices, IdType.CATEGORY);
 
         Location location = locationRepository.findLocationByParentLocationIsNull();
+        Arrays.fill(heights, -1);
+        dfs(heights, location.getId(), matrices, IdType.LOCATION);
+
+        matrices = matrixInfoDao.findAllBaselineMatrices();
+
+        Arrays.fill(heights, -1);
+        dfs(heights, microcategory.getId(), matrices, IdType.CATEGORY);
+
         Arrays.fill(heights, -1);
         dfs(heights, location.getId(), matrices, IdType.LOCATION);
     }
@@ -252,71 +260,83 @@ public class AlgorithmModule {
         }
     }
 
-    public UserPriceResponse searchInDiscountMatrix(int categoryId, int locationId, int userId) {
+    public UserPriceResponse searchInMatrix(int categoryId, int locationId, int userId) {
         List<MatrixInfo> discountMatrices = discountSegments.findDiscountMatricesForUser(userId);
+        UserPriceResponse userPriceResponse = null;
         for (MatrixInfo matrix : discountMatrices) {
-            Microcategory microcategory = microcategoryRepository.findById(categoryId).get();
-            Location location = locationRepository.findById(locationId).get();
-            boolean findFlag = true;
-            while (true) {
-                if (findFlag) {
-                    Optional<PricePair> pricePair = matrixDAO.findByLocationAndMicrocategory(matrix.getMatrixName(), location.getId(), microcategory.getId());
-                    if (pricePair.isPresent()) {
-                        return new UserPriceResponse(pricePair.get().getPrice(), locationId, categoryId, matrix.getMatrixId(), matrix.getSegment());
-                    }
+            userPriceResponse = searchLoop(categoryId, locationId, matrix);
+            if (userPriceResponse != null) {
+                break;
+            }
+        }
+        if (userPriceResponse == null) {
+            MatrixInfo baselineMatrix = matrixInfoDao.findBaselineMatrixById(matrixInfoDao.getActiveBaselineMatrixId()).get();
+            userPriceResponse = searchLoop(categoryId, locationId, baselineMatrix);
+        }
+        return userPriceResponse;
+    }
+
+    private UserPriceResponse searchLoop(int categoryId, int locationId, MatrixInfo matrix) {
+        Microcategory microcategory = microcategoryRepository.findById(categoryId).get();
+        Location location = locationRepository.findById(locationId).get();
+        boolean findFlag = true;
+        while (true) {
+            if (findFlag) {
+                Optional<PricePair> pricePair = matrixDAO.findByLocationAndMicrocategory(matrix.getMatrixName(), location.getId(), microcategory.getId());
+                if (pricePair.isPresent()) {
+                    return new UserPriceResponse(pricePair.get().getPrice(), locationId, categoryId, matrix.getMatrixId(), matrix.getSegment());
                 }
-                findFlag = true;
-                Optional<MicrocategoryJump> categoryJump = microcategoryService.findJumpByMatrix(microcategory, matrix.getMatrixId());
-                if (categoryJump.isPresent()) {
-                    if (categoryJump.get().getDistanceToNearest() == 0) {
-                        microcategory = microcategory.getParentMicrocategory();
-                        if (microcategory != null) {
-                            categoryJump = microcategoryService.findJumpByMatrix(microcategory, matrix.getMatrixId());
-                            if (categoryJump.isPresent()) {
-                                for (int i = 0; i < categoryJump.get().getDistanceToNearest(); i++) {
-                                    microcategory = microcategory.getParentMicrocategory();
-                                }
-                            } else {
-                                findFlag = false;
+            }
+            findFlag = true;
+            Optional<MicrocategoryJump> categoryJump = microcategoryService.findJumpByMatrix(microcategory, matrix.getMatrixId());
+            if (categoryJump.isPresent()) {
+                if (categoryJump.get().getDistanceToNearest() == 0) {
+                    microcategory = microcategory.getParentMicrocategory();
+                    if (microcategory != null) {
+                        categoryJump = microcategoryService.findJumpByMatrix(microcategory, matrix.getMatrixId());
+                        if (categoryJump.isPresent()) {
+                            for (int i = 0; i < categoryJump.get().getDistanceToNearest(); i++) {
+                                microcategory = microcategory.getParentMicrocategory();
                             }
                         } else {
                             findFlag = false;
                         }
                     } else {
-                        for (int i = 0; i < categoryJump.get().getDistanceToNearest(); i++) {
-                            microcategory = microcategory.getParentMicrocategory();
-                        }
+                        findFlag = false;
                     }
                 } else {
-                    microcategory = microcategoryRepository.findById(categoryId).get();
-                    Optional<LocationJump> locationJump = locationService.findJumpByMatrix(location, matrix.getMatrixId());
-                    if (locationJump.isPresent()) {
-                        if (locationJump.get().getDistanceToNearest() == 0) {
-                            location = location.getParentLocation();
-                            if (location != null) {
-                                locationJump = locationService.findJumpByMatrix(location, matrix.getMatrixId());
-                                if (locationJump.isPresent()) {
-                                    for (int i = 0; i < locationJump.get().getDistanceToNearest(); i++) {
-                                        location = location.getParentLocation();
-                                    }
-                                } else {
-                                    return null;
+                    for (int i = 0; i < categoryJump.get().getDistanceToNearest(); i++) {
+                        microcategory = microcategory.getParentMicrocategory();
+                    }
+                }
+            } else {
+                microcategory = microcategoryRepository.findById(categoryId).get();
+                Optional<LocationJump> locationJump = locationService.findJumpByMatrix(location, matrix.getMatrixId());
+                if (locationJump.isPresent()) {
+                    if (locationJump.get().getDistanceToNearest() == 0) {
+                        location = location.getParentLocation();
+                        if (location != null) {
+                            locationJump = locationService.findJumpByMatrix(location, matrix.getMatrixId());
+                            if (locationJump.isPresent()) {
+                                for (int i = 0; i < locationJump.get().getDistanceToNearest(); i++) {
+                                    location = location.getParentLocation();
                                 }
                             } else {
                                 return null;
                             }
                         } else {
-                            for (int i = 0; i < locationJump.get().getDistanceToNearest(); i++) {
-                                location = location.getParentLocation();
-                            }
+                            return null;
                         }
                     } else {
-                        return null;
+                        for (int i = 0; i < locationJump.get().getDistanceToNearest(); i++) {
+                            location = location.getParentLocation();
+                        }
                     }
+                } else {
+                    return null;
                 }
             }
         }
-        return null;
     }
 }
 
