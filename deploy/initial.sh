@@ -1,6 +1,5 @@
 #!/bin/bash
 
-#./export-envs.sh
 docker-compose up -d
 
 sleep 5
