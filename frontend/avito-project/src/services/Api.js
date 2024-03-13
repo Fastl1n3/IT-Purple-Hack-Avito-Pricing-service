@@ -1,76 +1,151 @@
 import axios from 'axios';
 
 export async function fetchUserSegments(userId) {
-  const response = await axios.get(`/segments/${userId}`);
-  return response.data;
+  try {
+    const response = await axios.get(`/segments/${userId}`);
+    return response.data;
+  } catch (error) {
+    console.error('Ошибка при загрузке сегментов пользователя:', error);
+    throw error;
+  }
 }
 
 export async function fetchBaselineMatrices() {
-  const response = await axios.get('/baseline_matrices');
-  return response.data;
+  try {
+    const response = await axios.get('/baseline_matrices');
+    return response.data;
+  } catch (error) {
+    console.error('Ошибка при загрузке базовых матриц:', error);
+    throw error;
+  }
 }
 
 export async function fetchDiscountMatrices() {
-  const response = await axios.get('/discount_matrices');
-  return response.data;
+  try {
+    const response = await axios.get('/discount_matrices');
+    return response.data;
+  } catch (error) {
+    console.error('Ошибка при загрузке скидочных матриц:', error);
+    throw error;
+  }
 }
 
 export async function fetchDiscountMatrixForSegment(segmentId) {
-  const response = await axios.get(`/discount_matrices?segment=${segmentId}`);
-  return response.data;
+  try {
+    const response = await axios.get(`/discount_matrices?segment=${segmentId}`);
+    return response.data;
+  } catch (error) {
+    console.error('Ошибка при загрузке скидочной матрицы для сегмента:', error);
+    throw error;
+  }
 }
 
 export async function fetchPrice(baselineMatrixId, locationId, microcategoryId) {
-  const response = await axios.get(`/price/${baselineMatrixId}?location=${locationId}&category=${microcategoryId}`);
-  return response.data;
+  try {
+    const response = await axios.get(`/price/${baselineMatrixId}?location=${locationId}&category=${microcategoryId}`);
+    return response.data;
+  } catch (error) {
+    console.error('Ошибка при получении цены:', error);
+    throw error;
+  }
 }
 
 export async function fetchMicrocategories() {
-  const response = await axios.get('/microcategories');
-  return response.data;
+  try {
+    const response = await axios.get('/microcategories');
+    return response.data;
+  } catch (error) {
+    console.error('Ошибка при загрузке микрокатегорий:', error);
+    throw error;
+  }
 }
 
 export async function fetchLocations() {
-  const response = await axios.get('/locations');
-  return response.data;
+  try {
+    const response = await axios.get('/locations');
+    return response.data;
+  } catch (error) {
+    console.error('Ошибка при загрузке локаций:', error);
+    throw error;
+  }
 }
 
 export async function fetchChildMicrocategories(microcategoryId) {
-  const response = await axios.get(`/microcategories/${microcategoryId}`);
-  return response.data;
+  try {
+    const response = await axios.get(`/microcategories/${microcategoryId}`);
+    return response.data;
+  } catch (error) {
+    console.error('Ошибка при загрузке дочерних микрокатегорий:', error);
+    throw error;
+  }
 }
 
 export async function fetchChildLocations(locationId) {
-  const response = await axios.get(`/locations/${locationId}`);
-  return response.data;
+  try {
+    const response = await axios.get(`/locations/${locationId}`);
+    return response.data;
+  } catch (error) {
+    console.error('Ошибка при загрузке дочерних локаций:', error);
+    throw error;
+  }
 }
 
 export async function addDiscountMatrix(matrixId, body) {
-  const response = await axios.post(`/discount_matrices/${matrixId}`, body);
-  return response.data;
+  try {
+    const response = await axios.post(`/discount_matrices/${matrixId}`, body);
+    return response.data;
+  } catch (error) {
+    console.error('Ошибка при добавлении записи в скидочную матрицу:', error);
+    throw error;
+  }
 }
 
 export async function createDiscountMatrix(body) {
-  const response = await axios.post('/discount_matrices', body);
-  return response.data;
+  try {
+    const response = await axios.post('/discount_matrices', body);
+    return response.data;
+  } catch (error) {
+    console.error('Ошибка при создании скидочной матрицы:', error);
+    throw error;
+  }
 }
 
 export async function addBaselineMatrix(matrixId, body) {
-  const response = await axios.post(`/baseline_matrices/${matrixId}`, body);
-  return response.data;
+  try {
+    const response = await axios.post(`/baseline_matrices/${matrixId}`, body);
+    return response.data;
+  } catch (error) {
+    console.error('Ошибка при добавлении записи в базовую матрицу:', error);
+    throw error;
+  }
 }
 
 export async function updateDiscountMatrix(matrixId, body) {
-  const response = await axios.patch(`/discount_matrices/${matrixId}`, body);
-  return response.data;
+  try {
+    const response = await axios.patch(`/discount_matrices/${matrixId}`, body);
+    return response.data;
+  } catch (error) {
+    console.error('Ошибка при обновлении цены в скидочной матрице:', error);
+    throw error;
+  }
 }
 
 export async function updateBaselineMatrix(matrixId, body) {
-  const response = await axios.patch(`/baseline_matrices/${matrixId}`, body);
-  return response.data;
+  try {
+    const response = await axios.patch(`/baseline_matrices/${matrixId}`, body);
+    return response.data;
+  } catch (error) {
+    console.error('Ошибка при обновлении цены в базовой матрице:', error);
+    throw error;
+  }
 }
 
 export async function deleteDiscountMatrix(matrixId, body) {
-  const response = await axios.delete(`/discount_matrices/${matrixId}`, { data: body });
-  return response.data;
+  try {
+    const response = await axios.delete(`/discount_matrices/${matrixId}`, { data: body });
+    return response.data;
+  } catch (error) {
+    console.error('Ошибка при удалении записи из скидочной матрицы:', error);
+    throw error;
+  }
 }
