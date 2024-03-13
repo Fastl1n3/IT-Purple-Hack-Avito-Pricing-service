@@ -20,7 +20,8 @@ public class UserPriceController {
 
     @PostMapping("/user/price")
     public UserPriceResponse getPriceForUser(@RequestBody UserRequest userRequest) {
-        //int price = algorithmModule.roadUpSearch(userRequest.getMicrocategoryId(), userRequest.getLocationId());
-        //return new UserPriceResponse(price, userRequest.getLocationId(), userRequest.getMicrocategoryId(), matrix, segment);
+        UserPriceResponse userPriceResponse = algorithmModule.searchInDiscountMatrix(userRequest.getMicrocategoryId(), userRequest.getLocationId(),userRequest.getUserId());
+        //todo сделать поиск из базовой, если в скидках нет
+        return userPriceResponse;
     }
 }

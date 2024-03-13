@@ -3,11 +3,15 @@ package ru.itpurplehack.avito.decepichupachapaticon.algo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import ru.itpurplehack.avito.decepichupachapaticon.dao.MatrixDAO;
+import ru.itpurplehack.avito.decepichupachapaticon.dao.MatrixInfoDAO;
+import ru.itpurplehack.avito.decepichupachapaticon.discountSegments.DiscountSegments;
+import ru.itpurplehack.avito.decepichupachapaticon.entity.priceMatrix.MatrixInfo;
 import ru.itpurplehack.avito.decepichupachapaticon.entity.priceMatrix.PricePair;
 import ru.itpurplehack.avito.decepichupachapaticon.entity.tree.Location;
 import ru.itpurplehack.avito.decepichupachapaticon.entity.tree.LocationJump;
 import ru.itpurplehack.avito.decepichupachapaticon.entity.tree.Microcategory;
 import ru.itpurplehack.avito.decepichupachapaticon.entity.tree.MicrocategoryJump;
+import ru.itpurplehack.avito.decepichupachapaticon.jsonEntity.UserPriceResponse;
 import ru.itpurplehack.avito.decepichupachapaticon.repository.LocationRepository;
 import ru.itpurplehack.avito.decepichupachapaticon.repository.MicrocategoryRepository;
 import ru.itpurplehack.avito.decepichupachapaticon.service.LocationService;
@@ -18,46 +22,51 @@ import java.util.*;
 @Component
 public class AlgorithmModule {
     private final MatrixDAO matrixDAO;
+    private final MatrixInfoDAO matrixInfoDao;
     private final LocationService locationService;
     private final MicrocategoryService microcategoryService;
     private final LocationRepository locationRepository;
     private final MicrocategoryRepository microcategoryRepository;
+    private final DiscountSegments discountSegments;
 
     @Autowired
-    public AlgorithmModule(MatrixDAO matrixDAO, LocationService locationService, MicrocategoryService microcategoryService, LocationRepository locationRepository, MicrocategoryRepository microcategoryRepository) {
+    public AlgorithmModule(MatrixDAO matrixDAO, MatrixInfoDAO matrixInfoDao, LocationService locationService, MicrocategoryService microcategoryService, LocationRepository locationRepository, MicrocategoryRepository microcategoryRepository, DiscountSegments discountSegments) {
         this.matrixDAO = matrixDAO;
+        this.matrixInfoDao = matrixInfoDao;
         this.locationService = locationService;
         this.microcategoryService = microcategoryService;
         this.locationRepository = locationRepository;
         this.microcategoryRepository = microcategoryRepository;
+        this.discountSegments = discountSegments;
     }
 
 
     public void fillJumpTable() {
-        int[] heights = new int[matrixDAO.getDiscounts().size()];
+        List<MatrixInfo> matrices = matrixInfoDao.findAllDiscountMatrices();
+        int[] heights = new int[matrices.size()];
 
         Microcategory microcategory = microcategoryRepository.findRootNode();
         Arrays.fill(heights, -1);
-        dfs(heights, microcategory.getId(), IdType.CATEGORY);
+        dfs(heights, microcategory.getId(), matrices, IdType.CATEGORY);
 
         Location location = locationRepository.findLocationByParentLocationIsNull();
         Arrays.fill(heights, -1);
-        dfs(heights, location.getId(), IdType.LOCATION);
+        dfs(heights, location.getId(), matrices, IdType.LOCATION);
     }
 
-    private void dfs(int[] heights, int nodeId, IdType treeType) {
+    private void dfs(int[] heights, int nodeId, List<MatrixInfo> matrices, IdType treeType) {
         switch (treeType) {
             case CATEGORY -> {
                 List<MicrocategoryJump> microcategoryJumps = new ArrayList<>();
                 int i = 0;
-                for (Map.Entry<Integer, String> ent : matrixDAO.getDiscounts().entrySet()) {
-                    if (matrixDAO.containsMicrocategory(ent.getValue(), nodeId)) {
+                for (MatrixInfo matrix : matrices) {
+                    if (matrixDAO.containsMicrocategory(matrix.getMatrixName(), nodeId)) {
                         heights[i] = 0;
-                        microcategoryJumps.add(new MicrocategoryJump(ent.getKey(), 0));
+                        microcategoryJumps.add(new MicrocategoryJump(matrix.getMatrixId(), 0));
                     } else {
                         if (heights[i] != -1) {
                             heights[i]++;
-                            microcategoryJumps.add(new MicrocategoryJump(ent.getKey(), heights[i]));
+                            microcategoryJumps.add(new MicrocategoryJump(matrix.getMatrixId(), heights[i]));
                         }
                     }
                     i++;
@@ -71,7 +80,7 @@ public class AlgorithmModule {
                     for (Microcategory childNode : childNodes) {
                         int[] copyHeights = new int[heights.length];
                         System.arraycopy(heights, 0, copyHeights, 0, heights.length);
-                        dfs(copyHeights, childNode.getId(), treeType);
+                        dfs(copyHeights, childNode.getId(), matrices, treeType);
                     }
                 }
             }
@@ -79,14 +88,14 @@ public class AlgorithmModule {
             case LOCATION -> {
                 List<LocationJump> locationJumps = new ArrayList<>();
                 int i = 0;
-                for (Map.Entry<Integer, String> ent : matrixDAO.getDiscounts().entrySet()) {
-                    if (matrixDAO.containsLocation(ent.getValue(), nodeId)) {
+                for (MatrixInfo matrix : matrices) {
+                    if (matrixDAO.containsLocation(matrix.getMatrixName(), nodeId)) {
                         heights[i] = 0;
-                        locationJumps.add(new LocationJump(ent.getKey(), 0));
+                        locationJumps.add(new LocationJump(matrix.getMatrixId(), 0));
                     } else {
                         if (heights[i] != -1) {
                             heights[i]++;
-                            locationJumps.add(new LocationJump(ent.getKey(), heights[i]));
+                            locationJumps.add(new LocationJump(matrix.getMatrixId(), heights[i]));
                         }
                     }
                     i++;
@@ -100,17 +109,14 @@ public class AlgorithmModule {
                     for (Location childNode : childNodes) {
                         int[] copyHeights = new int[heights.length];
                         System.arraycopy(heights, 0, copyHeights, 0, heights.length);
-                        dfs(copyHeights, childNode.getId(), treeType);
+                        dfs(copyHeights, childNode.getId(), matrices, treeType);
                     }
                 }
             }
         }
     }
 
-    public void addPair(int categoryId, int locationId, int price, int matrixId) {
-        PricePair pricePair = new PricePair(categoryId, locationId, price);
-        matrixDAO.save(matrixDAO.getDiscounts().get(matrixId), pricePair);
-
+    public void addPair(int categoryId, int locationId, int matrixId) {
         microcategoryService.changeJump(categoryId, matrixId, 0);
         changeHeightsWithAdding(categoryId, 0, matrixId, IdType.CATEGORY);
 
@@ -161,9 +167,7 @@ public class AlgorithmModule {
         }
     }
 
-    ////todo Если у данной  пары несколько нод, то не делать пересчет прыжков
-    public void deletePair(int categoryId, int locationId, int price, int matrixId) {
-        matrixDAO.delete(matrixDAO.getDiscounts().get(matrixId), new PricePair(categoryId, locationId, price));
+    public void deletePair(int categoryId, int locationId, int matrixId) {
         int height = 0;
 
         height = findNewHeight(categoryId, matrixId, IdType.CATEGORY);
@@ -248,27 +252,32 @@ public class AlgorithmModule {
         }
     }
 
-    public int roadUpSearch(int categoryId, int locationId) {
-        for (Map.Entry<Integer, String> ent : matrixDAO.getDiscounts().entrySet()) {
+    public UserPriceResponse searchInDiscountMatrix(int categoryId, int locationId, int userId) {
+        List<MatrixInfo> discountMatrices = discountSegments.findDiscountMatricesForUser(userId);
+        for (MatrixInfo matrix : discountMatrices) {
             Microcategory microcategory = microcategoryRepository.findById(categoryId).get();
             Location location = locationRepository.findById(locationId).get();
             boolean findFlag = true;
             while (true) {
                 if (findFlag) {
-                    Optional<PricePair> pricePair = matrixDAO.findByLocationAndMicrocategory(ent.getValue(), location.getId(), microcategory.getId());
+                    Optional<PricePair> pricePair = matrixDAO.findByLocationAndMicrocategory(matrix.getMatrixName(), location.getId(), microcategory.getId());
                     if (pricePair.isPresent()) {
-                        return pricePair.get().getPrice();
+                        return new UserPriceResponse(pricePair.get().getPrice(), locationId, categoryId, matrix.getMatrixId(), matrix.getSegment());
                     }
                 }
                 findFlag = true;
-                Optional<MicrocategoryJump> categoryJump = microcategoryService.findJumpByMatrix(microcategory, ent.getKey());
+                Optional<MicrocategoryJump> categoryJump = microcategoryService.findJumpByMatrix(microcategory, matrix.getMatrixId());
                 if (categoryJump.isPresent()) {
                     if (categoryJump.get().getDistanceToNearest() == 0) {
                         microcategory = microcategory.getParentMicrocategory();
-                        categoryJump = microcategoryService.findJumpByMatrix(microcategory, ent.getKey());
-                        if (categoryJump.isPresent()) {
-                            for (int i = 0; i < categoryJump.get().getDistanceToNearest(); i++) {
-                                microcategory = microcategory.getParentMicrocategory();
+                        if (microcategory != null) {
+                            categoryJump = microcategoryService.findJumpByMatrix(microcategory, matrix.getMatrixId());
+                            if (categoryJump.isPresent()) {
+                                for (int i = 0; i < categoryJump.get().getDistanceToNearest(); i++) {
+                                    microcategory = microcategory.getParentMicrocategory();
+                                }
+                            } else {
+                                findFlag = false;
                             }
                         } else {
                             findFlag = false;
@@ -280,17 +289,21 @@ public class AlgorithmModule {
                     }
                 } else {
                     microcategory = microcategoryRepository.findById(categoryId).get();
-                    Optional<LocationJump> locationJump = locationService.findJumpByMatrix(location, ent.getKey());
+                    Optional<LocationJump> locationJump = locationService.findJumpByMatrix(location, matrix.getMatrixId());
                     if (locationJump.isPresent()) {
                         if (locationJump.get().getDistanceToNearest() == 0) {
                             location = location.getParentLocation();
-                            locationJump = locationService.findJumpByMatrix(location, ent.getKey());
-                            if (locationJump.isPresent()) {
-                                for (int i = 0; i < locationJump.get().getDistanceToNearest(); i++) {
-                                    location = location.getParentLocation();
+                            if (location != null) {
+                                locationJump = locationService.findJumpByMatrix(location, matrix.getMatrixId());
+                                if (locationJump.isPresent()) {
+                                    for (int i = 0; i < locationJump.get().getDistanceToNearest(); i++) {
+                                        location = location.getParentLocation();
+                                    }
+                                } else {
+                                    return null;
                                 }
                             } else {
-                                return 0;
+                                return null;
                             }
                         } else {
                             for (int i = 0; i < locationJump.get().getDistanceToNearest(); i++) {
@@ -298,12 +311,12 @@ public class AlgorithmModule {
                             }
                         }
                     } else {
-                        return 0;
+                        return null;
                     }
                 }
             }
         }
-        return 0;
+        return null;
     }
 }
 
