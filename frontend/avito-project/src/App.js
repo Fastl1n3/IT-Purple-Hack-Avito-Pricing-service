@@ -15,7 +15,7 @@ export default function App() {
     <Router>
       <NaviBar/>
       <Routes>
-        <Route exact path="/matrix/*" element={<Matrix />} />
+        <Route exact path="/matrix" element={<Matrix />} />
         <Route exact path="/" element={<MatrixList />} />
       </Routes>
     </Router>
