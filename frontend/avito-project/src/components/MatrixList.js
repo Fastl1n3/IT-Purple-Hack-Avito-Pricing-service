@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect} from "react";
 
 import "bootstrap/dist/css/bootstrap.css";
 
@@ -8,7 +8,23 @@ import { Col, Container, Row, Card, Button } from "react-bootstrap";
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import { Link } from "react-router-dom";
 
+import { getBaselineMatrices } from "../services/BaselineMatrix";
+
 export default function Matrix() {
+  const [baselineMatrices, setBaselineMatrices] = useState([]);
+
+  useEffect(() => {
+    // Функция для загрузки базовых матриц при монтировании компонента
+    getBaselineMatrices()
+      .then(baselineMatrices => {
+        setBaselineMatrices(baselineMatrices);
+      })
+      .catch(error => {
+        console.error('Ошибка:', error);
+    // Обработка ошибок при получении или обработке данных
+  });
+  }, []); // Передаем пустой массив зависимостей, чтобы запрос выполнился только один раз при монтировании
+
   return (
     <>
       <Container style={{ paddingTop: "2rem", paddingBottom: "2rem" }}>
