@@ -1,13 +1,15 @@
 import React from "react";
 
-import { Col, Container, Row, Card, Button, InputGroup } from "react-bootstrap";
 import { useState } from "react";
 import Table from "./components/Table";
 import "./Matrix.css";
 import Modal from "./components/Modal";
-import Form from "react-bootstrap/Form"
+import { useParams } from "react-router-dom";
 
-const Matrix = () => {
+const BaseLineMatrix = () => {
+  const params  = useParams();
+  const matrix_id = params.matrixId;
+
   const [modalOpen, setModalOpen] = useState(false);
   const [rows, setRows] = useState([
     {
@@ -86,4 +88,4 @@ const Matrix = () => {
   );
 };
 
-export default Matrix;
+export default BaseLineMatrix;
