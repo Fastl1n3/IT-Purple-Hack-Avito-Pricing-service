@@ -1,0 +1,123 @@
+version: '3.0'
+
+networks:
+  app:
+    driver: bridge
+
+volumes:
+  neo4j-data:
+    driver: local
+  postgresql-master-data:
+    driver: local
+  postgresql-replica-1-data:
+    driver: local
+  postgresql-replica-2-data:
+    driver: local
+  redis-data:
+    driver: local
+
+services:
+  frontend:
+#    image: nginx:latest
+    build: ../frontend/
+    networks:
+      app:
+    restart: on-failure
+    ports:
+      - '80:3000'
+    environment:
+      BACKEND_HOST: ${BACKEND_HOST}
+
+  backend:
+#    image: nginx:latest
+    build: ../backend
+    networks:
+      app:
+    deploy:
+      mode: replicated
+      replicas: 3
+#    restart: on-failure
+    depends_on:
+      - postgresql_master
+      - neo4j
+      - redis
+    ports:
+      - "8080"
+    environment:
+      NEO4J_USER: ${NEO4J_USER}
+      NEO4J_PASSWORD: ${NEO4J_PASSWORD}
+      POSTGRES_HOST: ${POSTGRES_HOST}
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USERNAME: ${POSTGRES_USERNAME}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+
+  neo4j:
+    image: neo4j:5.17.0
+    container_name: neo4j
+    networks:
+      app:
+    restart: unless-stopped
+    volumes:
+      - neo4j-data:/var/lib/neo4j/data
+    environment:
+      NEO4J_AUTH: "${NEO4J_USER}/${NEO4J_PASSWORD}"
+    ports:
+      - '7687'
+
+  postgresql_master:
+    image: postgres:16.1-alpine3.19
+    container_name: postgresql_master
+    networks:
+      app:
+    restart: unless-stopped
+    volumes:
+      - postgresql-master-data:/var/lib/postgresql_master/data
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USERNAME: ${POSTGRES_USERNAME}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_USER: ${POSTGRES_USER}
+    ports:
+      - "5432"
+
+  postgresql_replica_1:
+    image: postgres:16.1-alpine3.19
+    container_name: postgresql_replica_1
+    networks:
+      app:
+    restart: unless-stopped
+    volumes:
+      - postgresql-replica-1-data:/var/lib/postgresql_replica_1/data
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USERNAME: ${POSTGRES_USERNAME}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_USER: ${POSTGRES_USER}
+    ports:
+      - "5432"
+
+  postgresql_replica_2:
+    image: postgres:16.1-alpine3.19
+    container_name: postgresql_replica_2
+    networks:
+      app:
+    restart: unless-stopped
+    volumes:
+      - postgresql-replica-2-data:/var/lib/postgresql_replica_1/data
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USERNAME: ${POSTGRES_USERNAME}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_USER: ${POSTGRES_USER}
+    ports:
+      - "5432"
+
+  redis:
+    image: redis:7.2.4
+    networks:
+      app:
+    volumes:
+      - redis-data:/var/lib/redis/data
+    ports:
+      - '6379'
+      - '8001'
