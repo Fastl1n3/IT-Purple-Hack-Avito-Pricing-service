@@ -8,14 +8,14 @@ import { Col, Container, Row, Card, Button } from "react-bootstrap";
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import { Link } from "react-router-dom";
 
-import { getBaselineMatrices } from "../services/BaselineMatrix";
+import { fetchBaselineMatrices } from "../services/requests/BaselineMatrix";
 
 export default function Matrix() {
   const [baselineMatrices, setBaselineMatrices] = useState([]);
 
   useEffect(() => {
     // Функция для загрузки базовых матриц при монтировании компонента
-    getBaselineMatrices()
+    fetchBaselineMatrices()
       .then(baselineMatrices => {
         setBaselineMatrices(baselineMatrices);
       })

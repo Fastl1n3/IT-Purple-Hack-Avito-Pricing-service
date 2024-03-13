@@ -7,25 +7,13 @@ import axios from 'axios';
 export async function fetchDiscountMatrices() {
     try {
       const response = await axios.get('/discount_matrices');
-      const { matrices } = response.data;
-  
-      if (matrices.length === 0) {
-        return [];
-      }
-  
-      // Преобразуем полученные данные в нужную структуру
-      const formattedMatrices = matrices.map(matrix => ({
-        id: matrix.matrix_id,
-        segmentId: matrix.segment_id,
-        name: matrix.matrix_name
-      }));
-  
-      return formattedMatrices;
+      
+      return response.data.matrices;
     } catch (error) {
       console.error('Ошибка при загрузке скидочных матриц:', error);
       throw error;
     }
-  }
+}
 
 /**
  * Функция для добавления записи в скидочную матрицу
