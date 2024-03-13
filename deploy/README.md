@@ -11,9 +11,11 @@ Use `origin.env` file as example to fill .env file. Use this keys and pass your 
 ### Export envs:
 
 ```shell
-export POSTGRESQL_DB=<db_name> && \
-export POSTGRESQL_USER=<username> && \
-export POSTGRESQL_PASSWORD=<password>
+export POSTGRESQL_DB=<pg_db_name> && \
+export POSTGRESQL_USER=<pg_username> && \
+export POSTGRESQL_PASSWORD=<pg_password> && \
+export NEO4J_USER=<neo4j_username> && \
+export NEO4J_PASSWORD=<neo4j_password> 
 ```
 
 where values in `<>` are values from .env file
