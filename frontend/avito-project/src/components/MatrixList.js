@@ -115,7 +115,7 @@ export default function Matrix() {
                 >
                   <Card.Title style={{ fontSize: "1.5rem" }}>{matrix.matrix_name}</Card.Title>
                   <Card.Text style={{ fontSize: "1.2rem" }}>ID: {matrix.matrix_id}</Card.Text>
-                  <Link to={`/matrix/${matrix.matrix_id}`}>
+                  <Link to={`disc_matrix/${matrix.matrix_id}`}>
                     <Button variant="primary" style={{ alignSelf: "center" }}>
                       Посмотреть матрицу
                     </Button>
@@ -161,7 +161,7 @@ export default function Matrix() {
                 >
                   <Card.Title style={{ fontSize: "1.5rem" }}>{matrix.matrix_name}</Card.Title>
                   <Card.Text style={{ fontSize: "1.2rem" }}>ID: {matrix.matrix_id}</Card.Text>
-                  <Link to={`/matrix/${matrix.matrix_id}`}>
+                  <Link to={`/base_matrix/${matrix.matrix_id}`}>
                     <Button variant="primary" style={{ alignSelf: "center" }}>
                       Посмотреть матрицу
                     </Button>
