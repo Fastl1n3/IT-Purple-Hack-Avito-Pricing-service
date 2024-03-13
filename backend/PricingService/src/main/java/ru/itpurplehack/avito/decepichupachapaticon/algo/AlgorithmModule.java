@@ -225,13 +225,117 @@ public class AlgorithmModule {
                 }
             }
             case LOCATION -> {
-
+                if (height == -1) {
+                    locationService.deleteJump(nodeId, matrixId);
+                } else {
+                    locationService.changeJump(nodeId, matrixId, height);
+                    height++;
+                }
+                Location location = locationRepository.findById(nodeId).get();
+                List<Location> childNodes = location.getChildLocations();
+                if (childNodes != null) {
+                    for (Location childNode : childNodes) {
+                        Optional<LocationJump> jump = locationService.findJumpByMatrix(location, matrixId);
+                        if (jump.isPresent()) {
+                            if (jump.get().getDistanceToNearest() == 0) {
+                                continue;
+                            }
+                        }
+                        changeHeightsWithRemoving(childNode.getId(), height, matrixId, treeType);
+                    }
+                }
             }
         }
     }
 
-    public void roadUpSearch(int categoryId, int locationId) {
-        //List<Integer> discountMatrices = matrixService.getDiscountMatrices();
+    public int roadUpSearch(int categoryId, int locationId) {
+        for (Map.Entry<Integer, String> ent : matrixDAO.getDiscounts().entrySet()) {
+            Microcategory microcategory = microcategoryRepository.findById(categoryId).get();
+            Location location = locationRepository.findById(locationId).get();
 
+            boolean findFlag = true;
+            while (true) {
+                if (findFlag) {
+                    Optional<PricePair> pricePair = matrixDAO.findByLocationAndMicrocategory(ent.getValue(), location.getId(), microcategory.getId());
+                    if (pricePair.isPresent()) {
+                        return pricePair.get().getPrice();
+                    }
+                }
+                findFlag = true;
+
+                int height = -1;
+                for (MicrocategoryJump jump : microcategory.getMicrocategoryJumps()) {
+                    if (jump.getDiscountMatrixId() == ent.getKey()) {
+                        height = jump.getDistanceToNearest();
+                        break;
+                    }
+                }
+                if (height != -1) {
+                    if (height == 0) {
+                        microcategory = microcategory.getParentMicrocategory();
+                        height = -1;
+                        for (MicrocategoryJump jump : microcategory.getMicrocategoryJumps()) {
+                            if (jump.getDiscountMatrixId() == ent.getKey()) {
+                                height = jump.getDistanceToNearest();
+                                break;
+                            }
+                        }
+                        if (height != -1) {
+                            for (int i = 0; i < height; i++) {
+                                microcategory = microcategory.getParentMicrocategory();
+                            }
+                        } else {
+                            findFlag = false;
+                        }
+                    } else {
+                        for (int i = 0; i < height; i++) {
+                            microcategory = microcategory.getParentMicrocategory();
+                        }
+                    }
+                } else {
+                    microcategory = microcategoryRepository.findById(categoryId).get();
+                    height = -1;
+                    for (LocationJump jump : location.getLocationJumps()) {
+                        if (jump.getDiscountMatrixId() == ent.getKey()) {
+                            height = jump.getDistanceToNearest();
+                            break;
+                        }
+                    }
+                    if (height != -1) {
+                        if (height == 0) {
+                            location = location.getParentLocation();
+                            height = -1;
+                            for (LocationJump jump : location.getLocationJumps()) {
+                                if (jump.getDiscountMatrixId() == ent.getKey()) {
+                                    height = jump.getDistanceToNearest();
+                                    break;
+                                }
+                            }
+                            if (height != -1) {
+                                for (int i = 0; i < height; i++) {
+                                    location = location.getParentLocation();
+                                }
+                            } else {
+                                return 0;
+                            }
+                        } else {
+                            for (int i = 0; i < height; i++) {
+                                location = location.getParentLocation();
+                            }
+                        }
+                    } else {
+                        return 0;
+                    }
+                }
+            }
+        }
+        return 0;
+    }
+
+    private int microcategoryLoop(int categoryId, Location location) {
+        Microcategory microcategory = microcategoryRepository.findById(categoryId).get();
+
+        return 0;
     }
 }
+
