@@ -9,3 +9,4 @@ sleep 5
 ./postgresql-config/configure-replication.sh
 
 ./neo4j-config/create-schemas.sh
+./postgresql-config/fill-matrices.sh
