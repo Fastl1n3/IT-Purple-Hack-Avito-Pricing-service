@@ -1,13 +1,14 @@
 import React from "react";
 
-import { Col, Container, Row, Card, Button } from "react-bootstrap";
+import { Col, Container, Row, Card, Button, InputGroup } from "react-bootstrap";
 import { useState } from "react";
 import Table from "./components/Table";
 import "./Matrix.css";
 import Modal from "./components/Modal";
+import Form from "react-bootstrap/Form"
 
 const Matrix = () => {
-  const [modalOpen, setModalOpen] = useState(true);
+  const [modalOpen, setModalOpen] = useState(false);
   const [rows, setRows] = useState([
     {
       location: "Новосибирск",
@@ -51,7 +52,7 @@ const Matrix = () => {
 
   return (
     <>
-      <Container style={{ paddingTop: "2rem", paddingBottom: "2rem" }}>
+      {/* <Container style={{ paddingTop: "2rem", paddingBottom: "2rem" }}>
         <Row>
           <Col>
             <h2 style={{ marginBottom: "1rem" }}> Выбранные локации </h2>
@@ -60,7 +61,7 @@ const Matrix = () => {
             <h2 style={{ marginBottom: "1rem" }}> Выбранные категории </h2>
           </Col>
         </Row>
-      </Container>
+      </Container> */}
       <div className="Matrix">
         <Table
           rows={rows}
