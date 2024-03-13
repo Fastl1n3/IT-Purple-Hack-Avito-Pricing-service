@@ -94,7 +94,7 @@ export default function Matrix() {
       <Container style={{ paddingTop: "2rem", paddingBottom: "2rem" }}>
         <h2 style={{ marginBottom: "2rem" }}> Discount матрицы </h2>
         <Row>
-          {baselineMatrices.slice(0, showAllMatrices ? baselineMatrices.length : 3).map(matrix => (
+          {discountMatrices.slice(0, showAllMatrices ? discountMatrices.length : 3).map(matrix => (
             <Col key={matrix.matrix_id}>
               <Card
                 style={{
