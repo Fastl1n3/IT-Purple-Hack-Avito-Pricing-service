@@ -10,14 +10,10 @@ import lombok.Setter;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class UserRequest {
-
-    @JsonProperty("location_id")
-    private int locationId;
+public class MicrocategoryResponse {
 
     @JsonProperty("microcategory_id")
     private int microcategoryId;
 
-    @JsonProperty("user_id")
-    private int userId;
+    private String name;
 }
