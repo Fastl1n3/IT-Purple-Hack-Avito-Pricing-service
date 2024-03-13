@@ -4,24 +4,22 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
-import ru.itpurplehack.avito.decepichupachapaticon.algo.AlgorithmModule;
+import ru.itpurplehack.avito.decepichupachapaticon.priceReturnService.PriceReturnService;
 import ru.itpurplehack.avito.decepichupachapaticon.jsonEntity.UserPriceResponse;
 import ru.itpurplehack.avito.decepichupachapaticon.jsonEntity.UserRequest;
 
 @RestController
 public class UserPriceController {
 
-    private final AlgorithmModule algorithmModule;
+    private final PriceReturnService priceReturnService;
 
     @Autowired
-    public UserPriceController(AlgorithmModule algorithmModule) {
-        this.algorithmModule = algorithmModule;
+    public UserPriceController(PriceReturnService priceReturnService) {
+        this.priceReturnService = priceReturnService;
     }
 
     @PostMapping("/user/price")
     public UserPriceResponse getPriceForUser(@RequestBody UserRequest userRequest) {
-        UserPriceResponse userPriceResponse = algorithmModule.searchInDiscountMatrix(userRequest.getMicrocategoryId(), userRequest.getLocationId(),userRequest.getUserId());
-        //todo сделать поиск из базовой, если в скидках нет
-        return userPriceResponse;
+        return priceReturnService.searchInMatrix(userRequest.getMicrocategoryId(), userRequest.getLocationId(),userRequest.getUserId());
     }
 }
