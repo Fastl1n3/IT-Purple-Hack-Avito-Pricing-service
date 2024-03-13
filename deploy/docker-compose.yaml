@@ -18,18 +18,16 @@ volumes:
 
 services:
   frontend:
-#    image: nginx:latest
     build: ../frontend/
     networks:
       app:
     restart: on-failure
     ports:
-      - '8080:8080'
+      - '80:3000'
     environment:
       BACKEND_HOST: ${BACKEND_HOST}
 
   backend:
-#    image: nginx:latest
     build: ../backend
     networks:
       app:
