@@ -5,15 +5,15 @@ import "./Modal.css";
 export const Modal = ({ closeModal, onSubmit, defaultValue }) => {
   const [formState, setFormState] = useState(
     defaultValue || {
-      page: "",
-      description: "",
-      status: "live",
+      location: "",
+      category: "",
+      price: "",
     }
   );
   const [errors, setErrors] = useState("");
 
   const validateForm = () => {
-    if (formState.page && formState.description && formState.status) {
+    if (formState.location && formState.category && formState.price) {
       setErrors("");
       return true;
     } else {
@@ -52,28 +52,16 @@ export const Modal = ({ closeModal, onSubmit, defaultValue }) => {
       <div className="my-modal">
         <form>
           <div className="form-group">
-            <label htmlFor="page">Page</label>
-            <input name="page" onChange={handleChange} value={formState.page} />
+            <label htmlFor="location">Локация</label>
+            <input name="location" onChange={handleChange} value={formState.location} />
           </div>
           <div className="form-group">
-            <label htmlFor="description">Description</label>
-            <textarea
-              name="description"
-              onChange={handleChange}
-              value={formState.description}
-            />
+            <label htmlFor="category">Категория</label>
+            <input name="category" onChange={handleChange} value={formState.category} />
           </div>
           <div className="form-group">
-            <label htmlFor="status">Status</label>
-            <select
-              name="status"
-              onChange={handleChange}
-              value={formState.status}
-            >
-              <option value="live">Live</option>
-              <option value="draft">Draft</option>
-              <option value="error">Error</option>
-            </select>
+            <label htmlFor="price">Цена</label>
+            <input name="price" onChange={handleChange} value={formState.price} />
           </div>
           {errors && <div className="error">{`Please include: ${errors}`}</div>}
           <button type="submit" className="btn" onClick={handleSubmit}>
