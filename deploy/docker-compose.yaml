@@ -18,6 +18,7 @@ volumes:
 
 services:
   frontend:
+#    image: nginx:latest
     build: ../frontend/
     networks:
       app:
@@ -28,6 +29,7 @@ services:
       BACKEND_HOST: ${BACKEND_HOST}
 
   backend:
+#    image: nginx:latest
     build: ../backend
     networks:
       app:
