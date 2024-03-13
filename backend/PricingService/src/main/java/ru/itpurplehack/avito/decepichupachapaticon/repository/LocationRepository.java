@@ -9,6 +9,6 @@ import java.util.Optional;
 @Repository
 public interface LocationRepository extends Neo4jRepository<Location, Integer> {
     Optional<Location> findLocationByName(String name);
-
+    Location findLocationByParentLocationIsNull();
 
 }
