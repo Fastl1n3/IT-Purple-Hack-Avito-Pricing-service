@@ -3,30 +3,39 @@ package ru.itpurplehack.avito.decepichupachapaticon.algo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import ru.itpurplehack.avito.decepichupachapaticon.algo.Entities.AuxiliaryPair;
-import ru.itpurplehack.avito.decepichupachapaticon.algo.services.AuxiliaryTableService;
-import ru.itpurplehack.avito.decepichupachapaticon.algo.services.MatrixService;
-import ru.itpurplehack.avito.decepichupachapaticon.algo.services.TreeTableService;
+import ru.itpurplehack.avito.decepichupachapaticon.dao.MatrixDAO;
+import ru.itpurplehack.avito.decepichupachapaticon.entity.priceMatrix.PricePair;
+import ru.itpurplehack.avito.decepichupachapaticon.entity.tree.Location;
+import ru.itpurplehack.avito.decepichupachapaticon.entity.tree.LocationJump;
+import ru.itpurplehack.avito.decepichupachapaticon.entity.tree.Microcategory;
+import ru.itpurplehack.avito.decepichupachapaticon.entity.tree.MicrocategoryJump;
+import ru.itpurplehack.avito.decepichupachapaticon.repository.LocationRepository;
+import ru.itpurplehack.avito.decepichupachapaticon.repository.MicrocategoryRepository;
+import ru.itpurplehack.avito.decepichupachapaticon.service.LocationService;
+import ru.itpurplehack.avito.decepichupachapaticon.service.MicrocategoryService;
 
-import java.util.Arrays;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 @Component
 public class AlgorithmModule {
-    private final AuxiliaryTableService auxiliaryTableService;
-    private final MatrixService matrixService;
-    private final TreeTableService treeTableService;
-
+    private final MatrixDAO matrixDAO;
+    private final LocationService locationService;
+    private final MicrocategoryService microcategoryService;
+    private final LocationRepository locationRepository;
+    private final MicrocategoryRepository microcategoryRepository;
 
     @Autowired
-    public AlgorithmModule(AuxiliaryTableService auxiliaryTableService, MatrixService matrixService, TreeTableService treeTableService) {
-        this.auxiliaryTableService = auxiliaryTableService;
-        this.matrixService = matrixService;
-        this.treeTableService = treeTableService;
+    public AlgorithmModule(MatrixDAO matrixDAO, LocationService locationService, MicrocategoryService microcategoryService, LocationRepository locationRepository, MicrocategoryRepository microcategoryRepository) {
+        this.matrixDAO = matrixDAO;
+        this.locationService = locationService;
+        this.microcategoryService = microcategoryService;
+        this.locationRepository = locationRepository;
+        this.microcategoryRepository = microcategoryRepository;
     }
 
+
     public void fillAuxiliaryTable() {
-        int[] heights = new int[matrixService.getDiscountMatrixCount()];
+        int[] heights = new int[matrixDAO.getDiscounts().size()];
 
         int categoryId = treeTableService.getRootId(IdType.CATEGORY);
         Arrays.fill(heights, -1);
@@ -38,53 +47,103 @@ public class AlgorithmModule {
     }
 
     private void dfs(int[] heights, int nodeId, IdType treeType) {
-        for (int i = 0; i < heights.length; i++) {
-            if (matrixService.findInDiscountMatrix(nodeId, i, treeType)) {
-                heights[i] = 0;
-                matrixService.saveHeight(0, nodeId, i, treeType);
-            } else {
-                if (heights[i] != -1) {
-                    heights[i]++;
-                    matrixService.saveHeight(heights[i], nodeId, i, treeType);
+        switch (treeType) {
+            case CATEGORY -> {
+                List<MicrocategoryJump> microcategoryJumps = new ArrayList<>();
+                int i = 0;
+                for (Map.Entry<Integer, String> ent : matrixDAO.getDiscounts().entrySet()) {
+                    if (matrixDAO.containsMicrocategory(ent.getValue(), nodeId)) {
+                        heights[i] = 0;
+                        microcategoryJumps.add(new MicrocategoryJump(ent.getKey(), 0));
+                    } else {
+                        if (heights[i] != -1) {
+                            heights[i]++;
+                            microcategoryJumps.add(new MicrocategoryJump(ent.getKey(), heights[i]));
+                        }
+                    }
+                    i++;
+                }
+                Microcategory microcategory = microcategoryRepository.findById(nodeId).get();
+                microcategory.setMicrocategoryJumps(microcategoryJumps);
+                microcategoryRepository.save(microcategory);
+
+                List<Microcategory> childNodes = microcategory.getChildMicrocategories();
+                if (childNodes != null) {
+                    for (Microcategory childNode : childNodes) {
+                        int[] copyHeights = new int[heights.length];
+                        System.arraycopy(heights, 0, copyHeights, 0, heights.length);
+                        dfs(copyHeights, childNode.getId(), treeType);
+                    }
                 }
             }
-        }
-        List<Integer> children = treeTableService.getNodeChildren(nodeId, treeType);
-        if (children != null) {
-            for (int childNode : children) {
-                int[] copyHeights = new int[heights.length];
-                System.arraycopy(heights, 0, copyHeights, 0, heights.length);
-                dfs(copyHeights, childNode, treeType);
+
+            case LOCATION -> {
+                List<LocationJump> locationJumps = new ArrayList<>();
+                int i = 0;
+                for (Map.Entry<Integer, String> ent : matrixDAO.getDiscounts().entrySet()) {
+                    if (matrixDAO.containsLocation(ent.getValue(), nodeId)) {
+                        heights[i] = 0;
+                        locationJumps.add(new LocationJump(ent.getKey(), 0));
+                    } else {
+                        if (heights[i] != -1) {
+                            heights[i]++;
+                            locationJumps.add(new LocationJump(ent.getKey(), heights[i]));
+                        }
+                    }
+                    i++;
+                }
+                Location location = locationRepository.findById(nodeId).get();
+                location.setLocationJumps(locationJumps);
+                locationRepository.save(location);
+
+                List<Location> childNodes = location.getChildLocations();
+                if (childNodes != null) {
+                    for (Location childNode : childNodes) {
+                        int[] copyHeights = new int[heights.length];
+                        System.arraycopy(heights, 0, copyHeights, 0, heights.length);
+                        dfs(copyHeights, childNode.getId(), treeType);
+                    }
+                }
             }
         }
     }
 
-    public void addPair(int categoryId, int locationId, int matrixId) {
-        matrixService.addPair(categoryId, locationId, matrixId);
+    public void addPair(int categoryId, int locationId, int price, int matrixId) {
+        PricePair pricePair = new PricePair(categoryId, locationId, price);
+        matrixDAO.save(matrixDAO.getDiscounts().get(matrixId), pricePair);
 
-        matrixService.changeHeight(0, categoryId, matrixId, IdType.CATEGORY);
+        microcategoryService.changeJumps(categoryId, matrixId, 0);
+//        matrixService.changeHeight(0, categoryId, matrixId, IdType.CATEGORY);
         changeHeightsWithAdding(categoryId, 0, matrixId, IdType.CATEGORY);
 
-        matrixService.changeHeight(0, locationId, matrixId, IdType.LOCATION);
+        locationService.changeJumps(locationId, matrixId,0);
+       // matrixService.changeHeight(0, locationId, matrixId, IdType.LOCATION);
         changeHeightsWithAdding(categoryId, 0, matrixId, IdType.LOCATION);
     }
 
     private void changeHeightsWithAdding(int nodeId, int height, int matrixId, IdType treeType) {
-        height++;
-        List<Integer> children = treeTableService.getNodeChildren(nodeId, treeType);
-        if (children != null) {
-            for (int childNode : children) {
-                Optional<AuxiliaryPair> auxiliaryPair = matrixService.getHeight(childNode, matrixId);
-                if (auxiliaryPair.isPresent()) {
-                    if (auxiliaryPair.get().getHeight() == 0) {
-                        continue;
-                    } else {
-                        matrixService.changeHeight(height, childNode, matrixId, treeType);
+        switch(treeType) {
+            case CATEGORY -> {
+                height++;
+                List<Microcategory> children = microcategoryRepository.findById(nodeId).get().getChildMicrocategories();
+                if (children != null) {
+                    for (Microcategory childNode : children) {
+                        Optional<AuxiliaryPair> auxiliaryPair = matrixService.getHeight(childNode, matrixId);
+                        if (auxiliaryPair.isPresent()) {
+                            if (auxiliaryPair.get().getHeight() == 0) {
+                                continue;
+                            } else {
+                                matrixService.changeHeight(height, childNode, matrixId, treeType);
+                            }
+                        } else {
+                            matrixService.changeHeight(height, childNode, matrixId, treeType);
+                        }
+                        changeHeightsWithAdding(childNode, height, matrixId, treeType);
                     }
-                } else {
-                    matrixService.changeHeight(height, childNode, matrixId, treeType);
                 }
-                changeHeightsWithAdding(childNode, height, matrixId, treeType);
+            }
+            case LOCATION -> {
+
             }
         }
     }
@@ -132,8 +191,8 @@ public class AlgorithmModule {
         }
     }
 
-    public void roadUpSearch(int categoryId, int locationId){
+    public void roadUpSearch(int categoryId, int locationId) {
         List<Integer> discountMatrices = matrixService.getDiscountMatrices();
-        
+
     }
 }

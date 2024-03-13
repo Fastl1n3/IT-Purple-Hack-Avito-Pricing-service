@@ -27,6 +27,6 @@ public class Microcategory {
     private List<Microcategory> childMicrocategories;
 
     @Relationship(type = "HIS_DISTANCE", direction = Relationship.Direction.OUTGOING)
-    private List<MircrocategoryJump> mircrocategoryJumps;
+    private List<MicrocategoryJump> microcategoryJumps;
 
 }

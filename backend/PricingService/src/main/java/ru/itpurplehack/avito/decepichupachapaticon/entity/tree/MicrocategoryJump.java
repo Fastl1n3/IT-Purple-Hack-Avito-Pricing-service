@@ -11,7 +11,7 @@ import org.springframework.data.neo4j.core.schema.Node;
 @Setter
 @Getter
 @AllArgsConstructor
-public class MircrocategoryJump {
+public class MicrocategoryJump {
 
     @Id
     private int discountMatrixId;
