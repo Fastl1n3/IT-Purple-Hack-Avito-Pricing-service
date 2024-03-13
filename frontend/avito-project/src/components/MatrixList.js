@@ -9,9 +9,11 @@ import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import { Link } from "react-router-dom";
 
 import { fetchBaselineMatrices } from "../services/requests/BaselineMatrix";
+import { fetchDiscountMatrices } from "../services/requests/DiscountMatrix"
 
 export default function Matrix() {
   const [baselineMatrices, setBaselineMatrices] = useState([]);
+  const [discountMatrices, setDiscountMatrices] = useState([]);
 
   useEffect(() => {
     // Функция для загрузки базовых матриц при монтировании компонента
@@ -20,11 +22,28 @@ export default function Matrix() {
         setBaselineMatrices(baselineMatrices);
       })
       .catch(error => {
-        console.error('Ошибка:', error);
-    // Обработка ошибок при получении или обработке данных
-  });
-  }, []); // Передаем пустой массив зависимостей, чтобы запрос выполнился только один раз при монтировании
+        console.error('Ошибка при загрузке базовых матриц:', error);
+      });
+  
+    // Функция для загрузки матриц скидок при монтировании компонента
+    fetchDiscountMatrices()
+      .then(discountMatrices => {
+        setDiscountMatrices(discountMatrices);
+      })
+      .catch(error => {
+        console.error('Ошибка при загрузке матриц скидок:', error);
+      });
+  }, []); // Передаем пустой массив зависимостей, чтобы запросы выполнились только один раз при монтировании
 
+
+  /*
+  Пример как разобрать массив:
+  baselineMatrices.forEach(matrix => {
+    console.log("Matrix ID:", matrix.matrix_id);
+    console.log("Segment ID:", matrix.segment_id);
+    console.log("Matrix Name:", matrix.matrix_name);
+  });
+  */
   return (
     <>
       <Container style={{ paddingTop: "2rem", paddingBottom: "2rem" }}>
