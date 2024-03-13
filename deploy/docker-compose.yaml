@@ -51,6 +51,7 @@ services:
 
   neo4j:
     image: neo4j:5.17.0
+    container_name: neo4j
     networks:
       app:
     restart: unless-stopped
@@ -58,6 +59,8 @@ services:
       - neo4j-data:/var/lib/neo4j/data
     environment:
       NEO4J_AUTH: "${NEO4J_USER}/${NEO4J_PASSWORD}"
+    ports:
+      - '7687'
 
   postgresql_master:
     image: postgres:16.1-alpine3.19
