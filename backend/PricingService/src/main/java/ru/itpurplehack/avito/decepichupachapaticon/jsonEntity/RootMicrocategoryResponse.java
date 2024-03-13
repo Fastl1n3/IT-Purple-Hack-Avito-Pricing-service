@@ -2,13 +2,14 @@ package ru.itpurplehack.avito.decepichupachapaticon.jsonEntity;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.springframework.scheduling.annotation.Scheduled;
 
 import java.time.LocalDateTime;
 
 @Getter
 @Setter
+@NoArgsConstructor
 public class RootMicrocategoryResponse {
 
     @JsonProperty("microcategory_id")
