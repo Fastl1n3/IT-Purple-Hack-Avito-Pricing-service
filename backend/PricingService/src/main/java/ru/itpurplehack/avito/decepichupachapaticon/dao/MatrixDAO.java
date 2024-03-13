@@ -12,10 +12,6 @@ import java.util.Optional;
 
 @Component
 public class MatrixDAO {
-
-    private final Map<Integer, String> discounts = new HashMap<>();
-
-    private final Map<Integer, String> baselines = new HashMap<>();
     private final JdbcTemplate jdbcTemplate;
 
     @Autowired
@@ -53,14 +49,4 @@ public class MatrixDAO {
                 new BeanPropertyRowMapper<>(PricePair.class), locationId, microcategoryId).stream().findAny();
     }
 
-
-    //   public Optional<PricePair> findByCategory(int locationId){}
-
-    //    public Optional<PricePair> findByLocation(String tableName, int locationId) {
-//        return jdbcTemplate.query("SELECT * FROM "+ tableName + " WHERE location_id=?", new BeanPropertyRowMapper<>(PricePair.class), locationId)
-//                .stream().findAny();
-//    }
-    public Map<Integer, String> getDiscounts() {
-        return discounts;
-    }
 }

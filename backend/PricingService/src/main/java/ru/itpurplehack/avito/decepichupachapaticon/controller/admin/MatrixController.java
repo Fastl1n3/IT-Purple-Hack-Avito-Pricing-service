@@ -4,6 +4,7 @@ package ru.itpurplehack.avito.decepichupachapaticon.controller.admin;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import ru.itpurplehack.avito.decepichupachapaticon.algo.AlgorithmModule;
 import ru.itpurplehack.avito.decepichupachapaticon.dao.MatrixDAO;
 import ru.itpurplehack.avito.decepichupachapaticon.dao.MatrixInfoDAO;
 import ru.itpurplehack.avito.decepichupachapaticon.entity.priceMatrix.MatrixInfo;
@@ -22,11 +23,13 @@ public class MatrixController {
     private final MatrixInfoDAO matrixInfoDAO;
 
     private final MatrixDAO matrixDAO;
+    private final AlgorithmModule algorithmModule;
 
     @Autowired
-    public MatrixController(MatrixInfoDAO matrixInfoDAO, MatrixDAO matrixDAO) {
+    public MatrixController(MatrixInfoDAO matrixInfoDAO, MatrixDAO matrixDAO, AlgorithmModule algorithmModule) {
         this.matrixInfoDAO = matrixInfoDAO;
         this.matrixDAO = matrixDAO;
+        this.algorithmModule = algorithmModule;
     }
 
     @GetMapping("/discount_matrices")
@@ -46,7 +49,7 @@ public class MatrixController {
             return ResponseEntity.status(402).body(new FailedCreateRecordResponse(402, "Not found this matrix: " + id));
         }
         matrixDAO.save(matrixInfo.get().getMatrixName(), pricePair);
-        //TODO переписать в дереве
+        algorithmModule.addPair(pricePair.getMicrocategoryId(), pricePair.getLocationId(), id);
         return ResponseEntity.ok(new SuccessCreateRecordResponse(id));
     }
 
@@ -88,7 +91,7 @@ public class MatrixController {
             return ResponseEntity.status(402).body(new FailedCreateRecordResponse(402, "Not found this matrix: " + id));
         }
         matrixDAO.delete(matrixInfo.get().getMatrixName(), pricePair);
-        //TODO переписать в дереве
+        algorithmModule.deletePair(pricePair.getMicrocategoryId(), pricePair.getLocationId(), id);
         return ResponseEntity.ok(new SuccessCreateRecordResponse(id));
     }
 
