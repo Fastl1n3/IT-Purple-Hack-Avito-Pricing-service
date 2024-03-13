@@ -8,7 +8,7 @@ import java.time.LocalDateTime;
 
 @Getter
 @Setter
-public class SuccessCreateRecordResponse extends CreateRecordResponse {
+public class SuccessCreateRecordResponse extends AbstractAdminResponse {
     @JsonProperty("matrix_id")
     private int matrixId;
 

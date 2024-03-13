@@ -9,7 +9,7 @@ import java.time.LocalDateTime;
 @Getter
 @Setter
 @AllArgsConstructor
-public abstract class CreateRecordResponse {
+public abstract class AbstractAdminResponse {
 
     private LocalDateTime timestamp;
 }

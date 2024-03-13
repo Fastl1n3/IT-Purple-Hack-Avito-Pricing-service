@@ -8,16 +8,16 @@ import java.time.LocalDateTime;
 
 @Getter
 @Setter
-public class FailedCreateRecordResponse extends CreateRecordResponse {
+public class FailedCreateRecordResponse extends AbstractAdminResponse {
 
-    @JsonProperty("record_code")
-    private int recordCode;
+    @JsonProperty("error_code")
+    private int errorCode;
 
     private String description;
 
-    public FailedCreateRecordResponse(int recordCode, String description) {
+    public FailedCreateRecordResponse(int errorCode, String description) {
         super(LocalDateTime.now());
-        this.recordCode = recordCode;
+        this.errorCode = errorCode;
         this.description = description;
     }
 }
