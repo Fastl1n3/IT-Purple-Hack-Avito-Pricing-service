@@ -1,6 +1,6 @@
 #!/bin/bash
 databases=("postgresql_master" "postgresql_replica_1" "postgresql_replica_2")
-schema_file="./postgresql-schema.sql"
+schema_file="./postgresql-config/postgresql-schema.sql"
 
 for db in "${databases[@]}"; do
     echo "Copying schema to $db..."

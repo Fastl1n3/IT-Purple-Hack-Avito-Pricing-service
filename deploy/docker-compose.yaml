@@ -18,7 +18,8 @@ volumes:
 
 services:
   frontend:
-    build: ../frontend/
+    image: nginx:latest
+    # build: ../frontend/
     networks:
       app:
     restart: on-failure
@@ -28,7 +29,8 @@ services:
       BACKEND_HOST: ${BACKEND_HOST}
 
   backend:
-    build: ../backend
+    image: nginx:latest
+    # build: ../backend
     networks:
       app:
     deploy:
@@ -36,7 +38,7 @@ services:
       replicas: 3
     restart: on-failure
     depends_on:
-      - postgresql-master
+      - postgresql_master
       - neo4j
       - redis
     ports:
