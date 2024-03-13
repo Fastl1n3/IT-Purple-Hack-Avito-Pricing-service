@@ -1,4 +1,4 @@
-package ru.itpurplehack.avito.decepichupachapaticon.controller;
+package ru.itpurplehack.avito.decepichupachapaticon.controller.admin;
 
 
 import org.springframework.beans.factory.annotation.Autowired;
