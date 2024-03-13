@@ -59,14 +59,14 @@ services:
     environment:
       NEO4J_AUTH: "${NEO4J_USER}/${NEO4J_PASSWORD}"
 
-  postgresql-master:
+  postgresql_master:
     image: postgres:16.1-alpine3.19
-    container_name: postgresql-master
+    container_name: postgresql_master
     networks:
       app:
     restart: unless-stopped
     volumes:
-      - postgresql-master-data:/var/lib/postgresql-master/data
+      - postgresql-master-data:/var/lib/postgresql_master/data
     environment:
       POSTGRES_DB: ${POSTGRES_DB}
       POSTGRES_USERNAME: ${POSTGRES_USERNAME}
@@ -75,14 +75,14 @@ services:
     ports:
       - "5432"
 
-  postgresql-replica-1:
+  postgresql_replica_1:
     image: postgres:16.1-alpine3.19
-    container_name: postgresql-replica-1
+    container_name: postgresql_replica_1
     networks:
       app:
     restart: unless-stopped
     volumes:
-      - postgresql-replica-1-data:/var/lib/postgresql-replica-1/data
+      - postgresql-replica-1-data:/var/lib/postgresql_replica_1/data
     environment:
       POSTGRES_DB: ${POSTGRES_DB}
       POSTGRES_USERNAME: ${POSTGRES_USERNAME}
@@ -91,14 +91,14 @@ services:
     ports:
       - "5432"
 
-  postgresql-replica-2:
+  postgresql_replica_2:
     image: postgres:16.1-alpine3.19
-    container_name: postgresql-replica-2
+    container_name: postgresql_replica_2
     networks:
       app:
     restart: unless-stopped
     volumes:
-      - postgresql-replica-2-data:/var/lib/postgresql-replica-1/data
+      - postgresql-replica-2-data:/var/lib/postgresql_replica_1/data
     environment:
       POSTGRES_DB: ${POSTGRES_DB}
       POSTGRES_USERNAME: ${POSTGRES_USERNAME}

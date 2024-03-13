@@ -1,8 +1,8 @@
 #!/bin/bash
 
 # Define the master database and the replicas
-master_db="postgresql-master"
-replicas=("postgresql-replica-1" "postgresql-replica-2")
+master_db="postgresql_master"
+replicas=("postgresql_replica_1" "postgresql_replica_2")
 
 # Configure the master database
 echo "Configuring $master_db as master..."

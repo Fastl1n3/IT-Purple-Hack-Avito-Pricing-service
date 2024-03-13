@@ -3,7 +3,7 @@
 max_number_of_replicas=4
 max_wal_senders=8
 
-databases=("postgresql-master" "postgresql-replica-1" "postgresql-replica-2")
+databases=("postgresql_master" "postgresql_replica_1" "postgresql_replica_2")
 
 for db in "${databases[@]}"; do
     echo "Configuring PostgreSQL instance $db for logical replication..."

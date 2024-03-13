@@ -1,5 +1,5 @@
 #!/bin/bash
-databases=("postgresql-master" "postgresql-replica-1" "postgresql-replica-2")
+databases=("postgresql_master" "postgresql_replica_1" "postgresql_replica_2")
 schema_file="./postgresql-schema.sql"
 
 for db in "${databases[@]}"; do
