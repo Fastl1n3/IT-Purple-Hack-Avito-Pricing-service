@@ -29,10 +29,13 @@ public class PriceController {
     }
 
     @GetMapping("/price/{bm_id}")
-    public ResponseEntity<AbstractAdminResponse> getPriceFromBaseline(@PathVariable("bm_id") int id, @RequestParam("lc_id") int locationId, @RequestParam("mc_id") int microcategoryId) {
-        Optional<MatrixInfo> matrixInfo = matrixInfoDAO.findBaselineMatrixById(id);
+    public ResponseEntity<AbstractAdminResponse> getPriceFromMatrix(@PathVariable("bm_id") int id, @RequestParam("lc_id") int locationId, @RequestParam("mc_id") int microcategoryId) {
+        Optional<MatrixInfo> matrixInfo = matrixInfoDAO.findDiscountMatrixById(id);
         if (matrixInfo.isEmpty()) {
-            return ResponseEntity.status(403).body(new FailedCreateRecordResponse(403, "Not found this matrix: " + id));
+            matrixInfo = matrixInfoDAO.findBaselineMatrixById(id);
+            if (matrixInfo.isEmpty()) {
+                return ResponseEntity.status(403).body(new FailedCreateRecordResponse(403, "Not found this matrix: " + id));
+            }
         }
         Optional<PricePair> pricePair = matrixDAO.findByLocationAndMicrocategory(matrixInfo.get().getMatrixName(), locationId, microcategoryId);
         int price = 0;
