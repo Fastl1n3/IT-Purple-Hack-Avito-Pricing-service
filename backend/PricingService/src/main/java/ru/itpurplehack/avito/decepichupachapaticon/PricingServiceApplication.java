@@ -11,7 +11,7 @@ public class PricingServiceApplication {
     public static void main(String[] args) {
         ConfigurableApplicationContext context = SpringApplication.run(PricingServiceApplication.class, args);
         /*PriceReturnService priceReturnService = context.getBean("priceReturnService", PriceReturnService.class);
-        priceReturnService.fillTables();*/
+        priceReturnService.fillTables();*/ //TODO расскоментить при заполненных таблицах DMatrices_info и BMatrices_info
     }
 
 }
