@@ -1,7 +1,31 @@
-# Requests
+# Post request для отдачи цены
 
+### Request
+```http request
+POST http://backend:8080/user/price
+```
+### Request body 
+```json
+{
+  "microcategory_id": 10,
+  "location_id": 202,
+  "user_id": 27
+}
+```
+
+### Response
+
+```json
+{
+  "price": 100,
+  "microcategory_id": 10,
+  "location_id": 202,
+  "matrix_id":  11,
+  "user_segment_id": 200
+}
+```
+# Далее запросы для интерфейса админа
 --- 
-
 # GET Requests
 
 ## Получение базовых матриц (без содержимого)
@@ -54,7 +78,7 @@ GET http://backend:8080/discount_matrices
 GET http://backend:8080/price/{bm_id}?location={lc_id}&category={mc_id}
 ```
 
-- bm_id - id базовой матрицы
+- bm_id - id матрицы
 - lc_id - id локации
 - mc_id - id микрокатегории
 
@@ -81,7 +105,7 @@ GET http://backend:8080/price/{bm_id}?location={lc_id}&category={mc_id}
 ```
 
 
-## Получение верхних 3 уровней микрокатегорий
+## Получение верхнего уровня микрокатегорий
 
 ### Request
 ```http request
@@ -91,12 +115,8 @@ GET http://backend:8080/microcategories
 ### Response
 ```json
 {
-  "values": [
-    {
-      "microcategory_id": 2,
-      "name": "other name"
-    }
-  ],
+  "microcategory_id": 2,
+  "name": "location name"   
   "timestamp": "YYYY-MM-DD HH-mm-SS"
 }
 ```
@@ -117,7 +137,7 @@ GET http://backend:8080/locations
 }
 ```
 
-## Получение следующих 3 уровней микрокатегорий
+## Получение следующего уровня микрокатегорий
 
 ### Request
 ```http request
@@ -134,10 +154,7 @@ GET http://backend:8080/microcategories/{mc_id}
   "child_nodes": [
     {
       "microcategory_id": 2,
-      "name": "other name",
-      "child_nodes": [
-        
-      ]
+      "name": "other name"
     }
   ],
   "timestamp": "YYYY-MM-DD HH-mm-SS"
@@ -336,6 +353,41 @@ DELETE http://backend:8080/discount_matrices/{m_id}
 ```
 
 - m_id - id скидочной матрицы
+
+### Request body
+```json
+{
+  "location_id":  1,
+  "microcategory_id": 2
+}
+```
+
+### Response
+
+#### Code 202
+```json
+{
+  "matrix_id":  22,
+  "timestamp": "YYYY-MM-DD HH-mm-SS"
+}
+```
+
+#### Other code
+```json
+{
+  "error_code": 501,
+  "description": "error description",
+  "timestamp": "YYYY-MM-DD HH-mm-SS"
+}
+```
+## Удаление записи в базовой матрице
+
+### Request
+```http request
+DELETE http://backend:8080/baseline_matrices/{m_id}
+```
+
+- m_id - id базовой матрицы
 
 ### Request body
 ```json
